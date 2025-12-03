@@ -9,7 +9,7 @@ public class JumpState : PlayerStateBase
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Entered JumpState");
+        // Debug.Log("Entered JumpState");
 
         Vector2 velocity = rigidBody.linearVelocity;
         velocity.y = playercontroller.JumpForce;

@@ -13,7 +13,7 @@ public class InputManager
     // Slide Down
     public bool SlideAttackDown { get; private set; }
     
-    // Dash
+    // DashzL
     private const float doubleTapThreshold = 0.25f;
     public bool DashRightDown { get; private set; }
     public bool DashLeftDown { get; private set; }
@@ -40,7 +40,7 @@ public class InputManager
             MoveY = Input.GetAxisRaw("Vertical");
 
             JumpDown = Input.GetKeyDown(KeyCode.Space);
-            AttackDown = Input.GetKeyDown(KeyCode.F);
+            AttackDown = Input.GetKeyDown(KeyCode.Z);
             SlideAttackDown = Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow);
             
             DetectDoubleTapDash();

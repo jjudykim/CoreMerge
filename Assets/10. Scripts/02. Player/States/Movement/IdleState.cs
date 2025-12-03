@@ -13,7 +13,7 @@ public class IdleState : PlayerStateBase
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Entered IdleState");
+        // Debug.Log("Entered IdleState");
         dashBufferTimer = 0f;
         dashBufferActive = false;
         ResetAnimationTriggers();
@@ -36,6 +36,12 @@ public class IdleState : PlayerStateBase
         float x = playercontroller.InputX;
         float y = playercontroller.InputY;
         //Debug.Log($"IdleState ::: InputX : {x} ::: InputY : {y}");
+
+        if (playercontroller.AttackPressed)
+        {
+            stateMachine.ChangeState(playercontroller.AttackState);
+            return;
+        }
 
         if (playercontroller.JumpPressed && playercontroller.IsGrounded)
         {

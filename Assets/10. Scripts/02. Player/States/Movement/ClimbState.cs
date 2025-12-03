@@ -12,7 +12,7 @@ public class ClimbState : PlayerStateBase
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Entered ClimbState");
+        //Debug.Log("Entered ClimbState");
         
         originalGravityScale = rigidBody.gravityScale;
         rigidBody.gravityScale = 0;

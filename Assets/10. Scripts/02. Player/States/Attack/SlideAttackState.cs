@@ -10,7 +10,7 @@ public class SlideAttackState : PlayerStateBase
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Entered SlideAttackState");
+        // Debug.Log("Entered SlideAttackState");
         
         slideDir = playercontroller.FacingDir;
         slideTimer = playercontroller.SlideDuration;

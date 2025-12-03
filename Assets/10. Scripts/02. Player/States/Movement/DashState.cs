@@ -12,7 +12,7 @@ public class DashState : PlayerStateBase
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Entered DashState");
+        //Debug.Log("Entered DashState");
 
         if (playercontroller.DashRightDown) playercontroller.FacingDir = 1;
         else if (playercontroller.DashLeftDown) playercontroller.FacingDir = -1;
@@ -26,12 +26,20 @@ public class DashState : PlayerStateBase
     public override void UpdateLogic()
     {
         base.UpdateLogic();
-        
+
+        if (playercontroller.AttackPressed)
+        {
+            stateMachine.ChangeState(playercontroller.DashAttackState);
+            return;
+        }
+
         dashTimer -= Time.deltaTime;
 
         if (dashTimer <= 0f)
         {
             float x = playercontroller.InputX;
+
+            ApplyDashEndPenalty();
             
             if(Mathf.Abs(x) >= 0.1f)
                 stateMachine.ChangeState(playercontroller.RunState);
@@ -39,6 +47,12 @@ public class DashState : PlayerStateBase
                 stateMachine.ChangeState(playercontroller.IdleState);
             return;
         }
+    }
+
+    private void ApplyDashEndPenalty()
+    {
+        float penaltySpeed = rigidBody.linearVelocity.x * 0.2f;
+        rigidBody.linearVelocity = new Vector2(penaltySpeed, rigidBody.linearVelocity.y);
     }
 
     public override void UpdatePhysics()
@@ -58,8 +72,6 @@ public class DashState : PlayerStateBase
     public override void Exit()
     {
         base.Exit();
-        float penaltySpeed = rigidBody.linearVelocity.x * 0.2f;
-        rigidBody.linearVelocity = new Vector2(penaltySpeed, rigidBody.linearVelocity.y);
         
         animator.ResetTrigger(playercontroller.AnimKeyDash);
     }

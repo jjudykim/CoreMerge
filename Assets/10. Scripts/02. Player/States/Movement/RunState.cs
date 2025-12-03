@@ -10,7 +10,7 @@ public class RunState : PlayerStateBase
     public override void Enter()
     {
         base.Enter();
-        Debug.Log("Entered RunState");
+        //Debug.Log("Entered RunState");
         animator.SetTrigger(playercontroller.AnimKeyRun);
         firstFrame = true;
     }
@@ -21,6 +21,12 @@ public class RunState : PlayerStateBase
         
         float x = playercontroller.InputX;
         float y = playercontroller.InputY;
+        
+        if (playercontroller.AttackPressed)
+        {
+            stateMachine.ChangeState(playercontroller.AttackState);
+            return;
+        }
 
         if (playercontroller.JumpPressed && playercontroller.IsGrounded)
         {

@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class PlayerController : MonoBehaviour
 {
+    #region Animator Key String
     // Controller에서 갱신
     private static readonly int SPEED = Animator.StringToHash("Speed");
     private static readonly int VELOCITY = Animator.StringToHash("Velocity");
@@ -14,9 +16,12 @@ public class PlayerController : MonoBehaviour
     private static readonly int TRIGGER_IDLE = Animator.StringToHash("Idle");
     private static readonly int TRIGGER_RUN = Animator.StringToHash("Run");
     private static readonly int TRIGGER_JUMP = Animator.StringToHash("Jump");
+    private static readonly int TRIGGER_ATTACK = Animator.StringToHash("Attack");
     private static readonly int TRIGGER_DASH = Animator.StringToHash("Dash");
+    private static readonly int TRIGGER_DASHATTACK = Animator.StringToHash("DashAttack");
     private static readonly int TRIGGER_SLIDE = Animator.StringToHash("Slide");
-    
+    private static readonly int TRIGGER_HURT = Animator.StringToHash("Hurt");
+    private static readonly int TRIGGER_DEAD = Animator.StringToHash("Dead");
     
     public int AnimKeySpeed => SPEED;
     public int AnimKeyVelocity => VELOCITY;
@@ -25,8 +30,13 @@ public class PlayerController : MonoBehaviour
     public int AnimKeyIdle => TRIGGER_IDLE;
     public int AnimKeyRun => TRIGGER_RUN;
     public int AnimKeyJump => TRIGGER_JUMP;
+    public int AnimKeyAttack => TRIGGER_ATTACK;
     public int AnimKeyDash => TRIGGER_DASH;
+    public int AnimKeyDashAttack => TRIGGER_DASHATTACK;
     public int AnimKeySlide => TRIGGER_SLIDE;
+    public int AnimKeyHurt => TRIGGER_HURT;
+    public int AnimKeyDead => TRIGGER_DEAD;
+    #endregion
     
     // Manager
     private InputManager input => Managers.Instance.Input;
@@ -61,14 +71,17 @@ public class PlayerController : MonoBehaviour
     public float JumpForce => jumpForce;
     public int FacingDir { get => facingDir; set => facingDir = value; }
 
+    #region Movement Settings
     // ---------------------------------------------------------
     // Dash Settings
     // ---------------------------------------------------------
     [Header("Dash Settings")]
     [SerializeField] private float dashSpeedMultiplier = 2.5f;
     [SerializeField] private float dashDuration = 0.2f;
+    [SerializeField] private float dashAttackDuration = 1f;
     public float DashSpeedMultiplier => dashSpeedMultiplier;
     public float DashDuration { get => dashDuration; set => dashDuration = value; }
+    public float DashAttackDuration => dashAttackDuration;
     
     // ---------------------------------------------------------
     // Slide Settings
@@ -89,7 +102,53 @@ public class PlayerController : MonoBehaviour
      
     public float ClimbSpeed {  get => climbSpeed; set => climbSpeed = value; }
     public Collider2D CurrentLadder { get; private set; }
+    #endregion
     
+    #region Damage Settings
+    // ---------------------------------------------------------
+    // HitBox Settings
+    // ---------------------------------------------------------
+    [Header("HitBox Settings")] 
+    [SerializeField] private GameObject[] hitBoxes;
+    private PlayerHitBox[] hitBoxesComponent;
+    private Collider2D[] hitBoxesCollider;
+    
+    // ---------------------------------------------------------
+    // Damage, Hurt Settings
+    // ---------------------------------------------------------
+    [Header("Damage / Hurt Settings")]
+    [SerializeField] private float damageInterval = 0.7f;  // 두 대 맞는 최소 간격(초)
+    [SerializeField] private float hurtInvincibleTime = 0.3f; // 피격 후 잠시 무적시간
+    [SerializeField] private float hurtDuration = 0.4f; // 피격 후 잠시 무적시간
+    [SerializeField] private bool ignoreDamageWhileAttacking = true; // 공격 중 피격 무시 여부
+    private float lastDamagedTime = 0f;
+    public bool IsInvincible { get; private set; }
+    
+    public bool IsInAttackState()
+    {
+        var s = StateMachine.CurrentState;
+        return s == AttackState || s == DashAttackState || s == SlideAttackState || s == SkillAttackState;
+    }
+
+    public bool CanReceiveDamage()
+    {
+        if(IsDead)
+            return false;
+
+        if (IsInvincible)
+            return false;
+
+        if (ignoreDamageWhileAttacking && IsInAttackState())
+            return false;
+
+        if (Time.time < lastDamagedTime + damageInterval)
+            return false;
+
+        return true;
+    }
+
+    public float HurtDurtaion => hurtDuration;
+    #endregion
     
     // ---------------------------------------------------------
     // States
@@ -109,8 +168,8 @@ public class PlayerController : MonoBehaviour
     // Status Check
     public bool IsGrounded { get; private set; }
     public bool IsOnLadder { get; private set; }
-    public bool IsHurt { get; private set; }
-    public bool IsDead { get; private set; }
+    public bool IsHurt { get; set; }
+    public bool IsDead { get; set; }
     
     // Input Cache
     public float InputX             => input.MoveX;
@@ -136,6 +195,15 @@ public class PlayerController : MonoBehaviour
 
         baseColliderOffset = Collider.offset;
         ladderCheckColliderOffset = ladderCheckerCollider.offset;
+
+        hitBoxesComponent = new PlayerHitBox[hitBoxes.Length];
+        hitBoxesCollider = new Collider2D[hitBoxes.Length];
+        for (int i = 0; i < hitBoxes.Length; ++i)
+        {
+            hitBoxesComponent[i] = hitBoxes[i].GetComponent<PlayerHitBox>();
+            hitBoxesComponent[i].Owner = this;
+            hitBoxesCollider[i] = hitBoxes[i].GetComponent<Collider2D>();
+        }
 
         #region States Instance Create
         IdleState = new IdleState(this, StateMachine);
@@ -197,6 +265,10 @@ public class PlayerController : MonoBehaviour
 
             FlipColliderOffset(baseColliderOffset, Collider);
             FlipColliderOffset(ladderCheckColliderOffset, ladderCheckerCollider);
+            for (int i = 0; i < hitBoxesCollider.Length; ++i)
+            {
+                FlipColliderOffset(hitBoxesCollider[i].offset, hitBoxesCollider[i]);
+            }
         }
     }
 
@@ -205,32 +277,6 @@ public class PlayerController : MonoBehaviour
         Vector2 newColOffset = originOffset;
         newColOffset.x = Mathf.Abs(originOffset.x) * FacingDir * -1;
         collider.offset = newColOffset;
-    }
-
-    public void Die()
-    {
-        if (IsDead)
-            return;
-        IsDead = true;
-        
-        StateMachine.ChangeState(DeadState);
-    }
-
-    // OnCollision
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        //if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        //{
-        //    IsGrounded = true;
-        //}
-    }
-
-    private void OnCollisionExit2D(Collision2D other)
-    {
-        //if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
-        //{
-        //    IsGrounded = false;
-        //}
     }
 
     private void CheckIfOnLadder()
@@ -267,17 +313,57 @@ public class PlayerController : MonoBehaviour
             Gizmos.DrawWireCube(pos, size);
         }
     }
+    
+    public void OnBodyHit(Collider2D other)
+    {
+        if (!CanReceiveDamage())
+            return;
 
-    // OnTrigger
-    //private void OnTriggerEnter2D(Collider2D other)
-    //{
-    //    if (other.gameObject.layer == LayerMask.NameToLayer("Ladder"))
-    //        IsOnLadder = true;
-    //}
-    //
-    //private void OnTriggerExit2D(Collider2D other)
-    //{
-    //    if(other.gameObject.layer == LayerMask.NameToLayer("Ladder"))
-    //        IsOnLadder = false;
-    //}
+        lastDamagedTime = Time.time;
+        Debug.Log("OnTriggerEnter2D ::: Player Damaged!!!");
+        
+        // TODO : 여기서 데미지 계산 후 Hp 감소
+        if (IsDead)
+            return;
+        
+        StateMachine.ChangeState(HurtState);
+
+        if (hurtInvincibleTime > 0f)
+        {
+            StartCoroutine(CoSetInvincible(hurtInvincibleTime));
+        }
+    }
+
+    private IEnumerator CoSetInvincible(float duration)
+    {
+        IsInvincible = true;
+        yield return new WaitForSeconds(duration);
+        IsInvincible = false;
+    }
+
+    // TODO : Attack Info나 Stat 넣고나서 데미지 적용하기
+    public void OnHitBoxTriggered(PlayerHitBox playerHitBox, Collider2D other)
+    {
+        switch (playerHitBox.HitBoxType)
+        {
+            case HitBoxType.DashAttack:
+                Debug.Log("OnHitBoxTriggered ::: DashAttack Done!!!");
+                break;
+            case HitBoxType.SlideAttack:
+                Debug.Log("OnHitBoxTriggered ::: SlideAttack Done!!!");
+                break;
+            case HitBoxType.NormalAttack:
+                Debug.Log("OnHitBoxTriggered ::: Attack Done!!!");
+                break;
+        }
+    }
+
+    public void Die()
+    {
+        if (IsDead)
+            return;
+        
+        IsDead = true;
+        StateMachine.ChangeState(DeadState);
+    }
 }
