@@ -5,12 +5,17 @@ using UnityEngine.Rendering;
 
 public class PlayerController : MonoBehaviour
 {
+    // TODO : 테스트용 임시 HP, 추후 스탯 추가 & 실제 데이터 감소
+    [SerializeField ]private int hp = 100;
+    
     #region Animator Key String
     // Controller에서 갱신
     private static readonly int SPEED = Animator.StringToHash("Speed");
     private static readonly int VELOCITY = Animator.StringToHash("Velocity");
     private static readonly int IS_GROUNDED = Animator.StringToHash("IsGrounded");
     private static readonly int IS_ONLADDER = Animator.StringToHash("IsOnLadder");
+    private static readonly int IS_DEAD = Animator.StringToHash("IsDead");
+    
     
     // State에서 갱신
     private static readonly int TRIGGER_IDLE = Animator.StringToHash("Idle");
@@ -27,6 +32,7 @@ public class PlayerController : MonoBehaviour
     public int AnimKeyVelocity => VELOCITY;
     public int AnimKeyIsGround => IS_GROUNDED;
     public int AnimKeyIsOnLadder => IS_ONLADDER;
+    public int AnimKeyIsDead => IS_DEAD;
     public int AnimKeyIdle => TRIGGER_IDLE;
     public int AnimKeyRun => TRIGGER_RUN;
     public int AnimKeyJump => TRIGGER_JUMP;
@@ -117,10 +123,16 @@ public class PlayerController : MonoBehaviour
     // Damage, Hurt Settings
     // ---------------------------------------------------------
     [Header("Damage / Hurt Settings")]
-    [SerializeField] private float damageInterval = 0.7f;  // 두 대 맞는 최소 간격(초)
-    [SerializeField] private float hurtInvincibleTime = 0.3f; // 피격 후 잠시 무적시간
-    [SerializeField] private float hurtDuration = 0.4f; // 피격 후 잠시 무적시간
+    [Tooltip("피격 사이의 최소 간격")]
+    [SerializeField] private float hurtDuration = 0.4f;
+    [Tooltip("피격 후 잠시 무적 시간")]
+    [SerializeField] private float hurtInvincibleTime = 0.3f;
+    [Tooltip("공격 중 피격 무시 여부")]
     [SerializeField] private bool ignoreDamageWhileAttacking = true; // 공격 중 피격 무시 여부
+    [Tooltip("피격 시 넉백되는 힘")]
+    [SerializeField] private float knockbackPower = 7f;
+    [Tooltip("피격 시 넉백 중 위로 치솟는 힘")]
+    [SerializeField] private float knockbackUpRatio = 7f;
     private float lastDamagedTime = 0f;
     public bool IsInvincible { get; private set; }
     
@@ -141,13 +153,16 @@ public class PlayerController : MonoBehaviour
         if (ignoreDamageWhileAttacking && IsInAttackState())
             return false;
 
-        if (Time.time < lastDamagedTime + damageInterval)
+        if (Time.time < lastDamagedTime + hurtDuration)
             return false;
 
         return true;
     }
 
     public float HurtDurtaion => hurtDuration;
+    public float KnockbackPower => knockbackPower;
+    public float KnockbackUpRatio => knockbackUpRatio;
+
     #endregion
     
     // ---------------------------------------------------------
@@ -322,10 +337,19 @@ public class PlayerController : MonoBehaviour
         lastDamagedTime = Time.time;
         Debug.Log("OnTriggerEnter2D ::: Player Damaged!!!");
         
-        // TODO : 여기서 데미지 계산 후 Hp 감소
         if (IsDead)
             return;
         
+        // TODO : 여기서 데미지 계산 후 Hp 감소
+        hp -= 20;
+
+        if (hp <= 0)
+        {
+            IsDead = true;
+            StateMachine.ChangeState(DeadState);
+            return;
+        }
+
         StateMachine.ChangeState(HurtState);
 
         if (hurtInvincibleTime > 0f)

@@ -5,6 +5,7 @@ public abstract class PlayerStateBase : IPlayerState
 {
     protected PlayerController playercontroller;
     protected PlayerStateMachine stateMachine;
+    protected Collider2D collider;
     protected Animator animator;
     protected Rigidbody2D rigidBody;
 
@@ -12,6 +13,7 @@ public abstract class PlayerStateBase : IPlayerState
     {
         this.playercontroller = player;
         this.stateMachine = stateMachine;
+        this.collider = player.Collider;
         this.animator = player.Animator;
         this.rigidBody = player.Rigidbody;
     }

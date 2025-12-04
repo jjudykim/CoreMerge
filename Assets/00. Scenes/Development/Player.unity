@@ -785,7 +785,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7809420978975115094, guid: 91670b7b22d7ad64aa011941939ef90a, type: 3}
       propertyPath: hurtDuration
-      value: 0.3
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809420978975115094, guid: 91670b7b22d7ad64aa011941939ef90a, type: 3}
+      propertyPath: knockbackPower
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809420978975115094, guid: 91670b7b22d7ad64aa011941939ef90a, type: 3}
+      propertyPath: knockbackUpRatio
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7809420978975115094, guid: 91670b7b22d7ad64aa011941939ef90a, type: 3}
+      propertyPath: hurtInvincibleTime
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 7809420978975115094, guid: 91670b7b22d7ad64aa011941939ef90a, type: 3}
       propertyPath: dashSpeedMultiplier

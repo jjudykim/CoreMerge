@@ -3,8 +3,6 @@
 public class HurtState : PlayerStateBase
 {
     private float hurtTimer;
-    private float knockbackPower = 7f;
-    private float knockbackUpRatio = 7f;
     public HurtState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
     }
@@ -22,9 +20,9 @@ public class HurtState : PlayerStateBase
         
         // knockback
         int dirX = playercontroller.FacingDir * -1;
-        Vector2 knockbackDir = new Vector2(dirX, knockbackUpRatio).normalized;
+        Vector2 knockbackDir = new Vector2(dirX, playercontroller.KnockbackUpRatio).normalized;
         rigidBody.linearVelocity = Vector2.zero;
-        rigidBody.AddForce(knockbackDir * knockbackPower, ForceMode2D.Impulse);
+        rigidBody.AddForce(knockbackDir * playercontroller.KnockbackPower, ForceMode2D.Impulse);
     }
 
     public override void UpdateLogic()
