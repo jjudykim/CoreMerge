@@ -60,7 +60,7 @@ Transform:
   m_GameObject: {fileID: 3171806126855370976}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.07, y: -0.83, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -100,7 +100,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 1.4}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -357,6 +357,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fd31b851b324c3bbaed1f78c63c63f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  hp: 100
   animator: {fileID: 7499433780586866991}
   spriteRenderer: {fileID: 2777259946436397689}
   collider: {fileID: 5075036542987088200}
@@ -382,6 +383,11 @@ MonoBehaviour:
   - {fileID: 3227443579232492415}
   - {fileID: 3185696795989634915}
   - {fileID: 6847938544078224942}
+  hurtDuration: 0.4
+  hurtInvincibleTime: 0.3
+  ignoreDamageWhileAttacking: 1
+  knockbackPower: 7
+  knockbackUpRatio: 7
 --- !u!50 &4139736021175925598
 Rigidbody2D:
   serializedVersion: 5
@@ -475,7 +481,7 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: -2.22}
+  m_Offset: {x: 0, y: 0.02}
   m_Radius: 0.1
 --- !u!1 &6847938544078224942
 GameObject:
@@ -599,7 +605,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2541799012362789912, guid: 9daa2d2872198c14599d14d422e5c966, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2541799012362789912, guid: 9daa2d2872198c14599d14d422e5c966, type: 3}
       propertyPath: m_LocalPosition.z
@@ -611,15 +617,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2541799012362789912, guid: 9daa2d2872198c14599d14d422e5c966, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2541799012362789912, guid: 9daa2d2872198c14599d14d422e5c966, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2541799012362789912, guid: 9daa2d2872198c14599d14d422e5c966, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2541799012362789912, guid: 9daa2d2872198c14599d14d422e5c966, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

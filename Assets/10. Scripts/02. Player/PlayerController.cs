@@ -168,17 +168,17 @@ public class PlayerController : MonoBehaviour
     // ---------------------------------------------------------
     // States
     // ---------------------------------------------------------
-    public IdleState IdleState { get; set; }
-    public RunState RunState { get; set; }
-    public DashState DashState { get; set; }
-    public JumpState JumpState { get; set; }
-    public ClimbState ClimbState { get; set; }
-    public AttackState AttackState { get; set; }
-    public SlideAttackState SlideAttackState { get; set; }
-    public DashAttackState DashAttackState { get; set; }
-    public SkillAttackState SkillAttackState { get; set; }
-    public HurtState HurtState { get; set; }
-    public DeadState DeadState { get; set; }
+    public IdleState IdleState { get; private set; }
+    public RunState RunState { get; private set; }
+    public DashState DashState { get; private set; }
+    public JumpState JumpState { get; private set; }
+    public ClimbState ClimbState { get; private set; }
+    public AttackState AttackState { get; private set; }
+    public SlideAttackState SlideAttackState { get; private set; }
+    public DashAttackState DashAttackState { get; private set; }
+    public SkillAttackState SkillAttackState { get; private set; }
+    public HurtState HurtState { get; private set; }
+    public DeadState DeadState { get; private set; }
     
     // Status Check
     public bool IsGrounded { get; private set; }

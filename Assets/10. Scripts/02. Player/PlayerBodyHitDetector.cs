@@ -9,6 +9,7 @@ public class PlayerBodyHitDetector : MonoBehaviour
     {
         if (other.CompareTag("Monster") || other.CompareTag("MonsterProjectile"))
         {
+            Debug.Log("PlayerBodyHitDetector Call!!!");
             owner.OnBodyHit(other);
         }
     }
