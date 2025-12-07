@@ -5,9 +5,6 @@ using UnityEngine.Rendering;
 
 public class PlayerController : MonoBehaviour
 {
-    // TODO : 테스트용 임시 HP, 추후 스탯 추가 & 실제 데이터 감소
-    [SerializeField ]private int hp = 100;
-    
     #region Animator Key String
     // Controller에서 갱신
     private static readonly int SPEED = Animator.StringToHash("Speed");
@@ -48,7 +45,8 @@ public class PlayerController : MonoBehaviour
     private InputManager input => Managers.Instance.Input;
     
     // State Machine
-    [field: SerializeField] public PlayerStateMachine StateMachine { get; private set; }
+    [field: SerializeField] 
+    public PlayerStateMachine StateMachine { get; private set; }
     
     // ---------------------------------------------------------
     // Components
@@ -128,7 +126,7 @@ public class PlayerController : MonoBehaviour
     [Tooltip("피격 후 잠시 무적 시간")]
     [SerializeField] private float hurtInvincibleTime = 0.3f;
     [Tooltip("공격 중 피격 무시 여부")]
-    [SerializeField] private bool ignoreDamageWhileAttacking = true; // 공격 중 피격 무시 여부
+    [SerializeField] private bool ignoreDamageWhileAttacking = true;
     [Tooltip("피격 시 넉백되는 힘")]
     [SerializeField] private float knockbackPower = 7f;
     [Tooltip("피격 시 넉백 중 위로 치솟는 힘")]
@@ -159,6 +157,14 @@ public class PlayerController : MonoBehaviour
         return true;
     }
 
+    public void ApplyDamageGating()
+    {
+        lastDamagedTime = Time.time;
+
+        if (hurtInvincibleTime > 0f)
+            StartCoroutine(CoSetInvincible(hurtInvincibleTime));
+    }
+
     public float HurtDurtaion => hurtDuration;
     public float KnockbackPower => knockbackPower;
     public float KnockbackUpRatio => knockbackUpRatio;
@@ -168,17 +174,17 @@ public class PlayerController : MonoBehaviour
     // ---------------------------------------------------------
     // States
     // ---------------------------------------------------------
-    public IdleState IdleState { get; set; }
-    public RunState RunState { get; set; }
-    public DashState DashState { get; set; }
-    public JumpState JumpState { get; set; }
-    public ClimbState ClimbState { get; set; }
-    public AttackState AttackState { get; set; }
-    public SlideAttackState SlideAttackState { get; set; }
-    public DashAttackState DashAttackState { get; set; }
-    public SkillAttackState SkillAttackState { get; set; }
-    public HurtState HurtState { get; set; }
-    public DeadState DeadState { get; set; }
+    public IdleState IdleState { get; private set; }
+    public RunState RunState { get; private set; }
+    public DashState DashState { get; private set; }
+    public JumpState JumpState { get; private set; }
+    public ClimbState ClimbState { get; private set; }
+    public AttackState AttackState { get; private set; }
+    public SlideAttackState SlideAttackState { get; private set; }
+    public DashAttackState DashAttackState { get; private set; }
+    public SkillAttackState SkillAttackState { get; private set; }
+    public HurtState HurtState { get; private set; }
+    public DeadState DeadState { get; private set; }
     
     // Status Check
     public bool IsGrounded { get; private set; }
@@ -257,7 +263,7 @@ public class PlayerController : MonoBehaviour
     private void UpdateAnimationParams()
     {
         if (StateMachine.CurrentState != JumpState)
-            Animator.ResetTrigger((AnimKeyJump));
+            Animator.ResetTrigger(AnimKeyJump);
 
         Animator.SetFloat(SPEED, Mathf.Abs(Rigidbody.linearVelocityX));
         Animator.SetFloat(VELOCITY, Rigidbody.linearVelocityY);
@@ -328,35 +334,6 @@ public class PlayerController : MonoBehaviour
             Gizmos.DrawWireCube(pos, size);
         }
     }
-    
-    public void OnBodyHit(Collider2D other)
-    {
-        if (!CanReceiveDamage())
-            return;
-
-        lastDamagedTime = Time.time;
-        Debug.Log("OnTriggerEnter2D ::: Player Damaged!!!");
-        
-        if (IsDead)
-            return;
-        
-        // TODO : 여기서 데미지 계산 후 Hp 감소
-        hp -= 20;
-
-        if (hp <= 0)
-        {
-            IsDead = true;
-            StateMachine.ChangeState(DeadState);
-            return;
-        }
-
-        StateMachine.ChangeState(HurtState);
-
-        if (hurtInvincibleTime > 0f)
-        {
-            StartCoroutine(CoSetInvincible(hurtInvincibleTime));
-        }
-    }
 
     private IEnumerator CoSetInvincible(float duration)
     {
@@ -380,6 +357,10 @@ public class PlayerController : MonoBehaviour
                 Debug.Log("OnHitBoxTriggered ::: Attack Done!!!");
                 break;
         }
+        
+        string attackKey = playerHitBox.HitBoxType.ToString();
+        
+        Player.LocalPlayer.DamageToEnemy(other, attackKey);
     }
 
     public void Die()
@@ -390,4 +371,6 @@ public class PlayerController : MonoBehaviour
         IsDead = true;
         StateMachine.ChangeState(DeadState);
     }
+
+    public void Hurt() => StateMachine.ChangeState(HurtState);
 }
