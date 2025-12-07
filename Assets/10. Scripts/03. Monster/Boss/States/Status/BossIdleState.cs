@@ -73,7 +73,7 @@ public class BossIdleState : BossStateBase
         int pattern = Random.Range(0, 2);
         
         if (pattern == 0)
-            stateMachine.ChangeState(bosscontroller.P2ProjectileState);
+            stateMachine.ChangeState(bosscontroller.P2RangeState);
         else
             stateMachine.ChangeState(bosscontroller.P2HandState);
     }
