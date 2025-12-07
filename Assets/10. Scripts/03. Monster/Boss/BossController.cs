@@ -73,11 +73,14 @@ public class BossController : MonoBehaviour
     public BossPhase1RangeState P1RangeState { get; private set; }
     public BossPhaseTransitionState PhaseTransitionState  { get; private set; }
     public BossPhase2IdleState P2IdleState { get; private set; }
-    public BossPhase2ProjectileState P2ProjectileState { get; private set; }
-    public BossPhase2HandPatternState P2HandState { get; private set; }
+    public BossPhase2RangeState P2RangeState { get; private set; }
+    public BossPhase2HandState P2HandState { get; private set; }
     public BossHurtState HurtState { get; private set; }
     public BossDeadState DeadState { get; private set; }
 
+    public void Hurt() => StateMachine.ChangeState(HurtState);
+    public void Die() => StateMachine.ChangeState(DeadState);
+    
     private void Awake()
     {
         StateMachine = new BossStateMachine();
@@ -90,12 +93,12 @@ public class BossController : MonoBehaviour
         P1RangeState = new BossPhase1RangeState(this, StateMachine);
         PhaseTransitionState  = new BossPhaseTransitionState(this, StateMachine);
         P2IdleState = new BossPhase2IdleState(this, StateMachine);
-        P2ProjectileState = new BossPhase2ProjectileState(this, StateMachine);
-        P2HandState = new BossPhase2HandPatternState(this, StateMachine);
+        P2RangeState = new BossPhase2RangeState(this, StateMachine);
+        P2HandState = new BossPhase2HandState(this, StateMachine);
         HurtState = new BossHurtState(this, StateMachine);
         DeadState = new BossDeadState(this, StateMachine);
     }
-
+    
     private void Start()
     {
         StateMachine.Init(IdleState);
@@ -115,4 +118,8 @@ public class BossController : MonoBehaviour
     {
         CurrentPhase = newPhase;
     }
+    
+    
+    
+    
 }
