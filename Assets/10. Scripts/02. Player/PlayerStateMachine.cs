@@ -15,8 +15,8 @@ public class PlayerStateMachine
         if (CurrentState == newState)
             return;
 
-        CurrentState?.Exit();
+        CurrentState.Exit();
         CurrentState = newState;
-        CurrentState?.Enter();
+        CurrentState.Enter();
     }
 }
