@@ -6,6 +6,7 @@ public enum ESkillType
     Passive,
 }
 
+[System.Serializable]
 public class SkillData
 {
     [Header("Identity")]
@@ -22,7 +23,7 @@ public class SkillData
     public float power;
 }
 
-[CreateAssetMenu(fileName = "SkillData", menuName = "Skill/SKillData", order = 1)]
+[CreateAssetMenu(fileName = "SkillData", menuName = "Skill/SKillData")]
 public class SkillDataSO : ScriptableObject
 {
     public SkillData data;

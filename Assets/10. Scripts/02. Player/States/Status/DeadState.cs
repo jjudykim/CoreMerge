@@ -17,7 +17,7 @@ public class DeadState : PlayerStateBase
         animator.SetBool(playercontroller.AnimKeyIsDead, true);
         animator.SetTrigger(playercontroller.AnimKeyDead);
 
-         Managers.Instance.Input.GamePlayInputEnabled = false;
+        Managers.Instance.Input.SetEnable(true);
     }
 
     public override void Exit()

@@ -3,6 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[Serializable]
+public class TierDropEntry
+{
+    public ECoreTier tier;
+    public float weight;
+}
+
+[Serializable]
+public class MonsterTypeDropTable
+{
+    public MonsterType monsterType;
+
+    [Range(0f, 1f)] 
+    public float dropChance = 1f;
+
+    public TierDropEntry[] tierEntries;
+}
+
 public class CoreDBManager
 {
     private Dictionary<int, CoreData> coreDataById = new();
@@ -18,7 +36,7 @@ public class CoreDBManager
         coreDataById.Clear();
         coreDataByTier.Clear();
 
-        CoreDataSO[] allCoreData = Resources.LoadAll<CoreDataSO>("Core");
+        CoreDataSO[] allCoreData = Resources.LoadAll<CoreDataSO>("SO/Core");
         if (allCoreData == null || allCoreData.Length == 0)
         {
             Debug.LogWarning("CoreDBManager ::: Resources/Core 경로에서 CoreDataSO를 찾지 못함");

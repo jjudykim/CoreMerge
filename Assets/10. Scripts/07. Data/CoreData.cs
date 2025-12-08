@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum ECoreTier
+public enum ECoreTier : int
 {
     Tier1 = 1,
     Tier2 = 2,
@@ -45,7 +45,7 @@ public class CoreData
     public CoreStatModifier modifier;
 }
 
-[CreateAssetMenu(fileName = "CoreData", menuName = "Core/CoreData", order = 1)]
+[CreateAssetMenu(fileName = "CoreData", menuName = "Core/CoreData")]
 public class CoreDataSO : ScriptableObject
 {
     public CoreData data;
