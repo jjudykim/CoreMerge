@@ -345,6 +345,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1ae2184b17f2484dad7d3aa76b58df9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
+  playerStat:
+    maxHp: 100
+    attack: 10
+    defense: 2
+    currentHp: 100
+    critChance: 30
+    critDamageMultiplier: 2
+    skillCooldownReduction: 5
 --- !u!114 &7809420978975115094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -357,7 +365,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3fd31b851b324c3bbaed1f78c63c63f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
-  hp: 100
   animator: {fileID: 7499433780586866991}
   spriteRenderer: {fileID: 2777259946436397689}
   collider: {fileID: 5075036542987088200}
@@ -590,6 +597,10 @@ PrefabInstance:
     - target: {fileID: 2075881204823910696, guid: 9daa2d2872198c14599d14d422e5c966, type: 3}
       propertyPath: m_Layer
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2075881204823910696, guid: 9daa2d2872198c14599d14d422e5c966, type: 3}
+      propertyPath: m_TagString
+      value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 2541799012362789912, guid: 9daa2d2872198c14599d14d422e5c966, type: 3}
       propertyPath: m_LocalScale.x

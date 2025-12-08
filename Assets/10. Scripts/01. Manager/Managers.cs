@@ -8,7 +8,8 @@ public class Managers : SingletonBase<Managers>
 {
     public static Managers Instance => instance;
 
-    public InputManager Input { get; private set; }
+    public static InputManager Input { get; private set; }
+    public static CoreDBManager CoreDB { get; private set; }
 
     protected override void Awake()
     {
@@ -19,7 +20,12 @@ public class Managers : SingletonBase<Managers>
     {
         base.OnInitialize();
         
+        // Manager Instantiate
         Input = new InputManager();
+        CoreDB = new CoreDBManager();
+        
+        // Manager Initialize
+        CoreDB.Init();
     }
 
     private void Update()
