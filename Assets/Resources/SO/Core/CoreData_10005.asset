@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 0}
-  m_Name: CoreData_10001
+  m_Name: CoreData_10005
   m_EditorClassIdentifier: Assembly-CSharp::CoreDataSO
   data:
-    id: 0
-    coreName: 
-    tier: 0
+    id: 10005
+    coreName: core_big_amber
+    tier: 5
     icon: {fileID: 0}
     modifier:
-      maxHpBonus: 0
-      attackBonus: 0
-      defenseBonus: 0
-      critChanceBonus: 0
-      critDamageBonus: 0
-      skillCooldownRate: 0
+      maxHpBonus: 2
+      attackBonus: 15
+      defenseBonus: 1
+      critChanceBonus: 10
+      critDamageBonus: 20
+      skillCooldownRate: 20
       canUseSkill: 0
       skillId: 0

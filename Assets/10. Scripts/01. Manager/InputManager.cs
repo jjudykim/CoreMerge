@@ -106,4 +106,9 @@ public class InputManager
         DashRightDown = false;
         DashLeftDown  = false;
     }
+
+    public void SetEnable(bool enable)
+    {
+        GamePlayInputEnabled = enable ? true : false;
+    }
 }
