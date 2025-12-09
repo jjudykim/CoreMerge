@@ -6,6 +6,9 @@ public class MonsterController : MonoBehaviour
 {
     private static readonly int IS_MOVE = Animator.StringToHash("IsMove");
     private static readonly int ATTACK = Animator.StringToHash("Attack");
+
+    [SerializeField] private Monster owner;
+    public Monster Owner => owner;
     
     [SerializeField] private float moveSpeed;
     [SerializeField] private float traceRange = 10.0f;

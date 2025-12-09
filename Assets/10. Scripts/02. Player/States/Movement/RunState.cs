@@ -69,8 +69,15 @@ public class RunState : PlayerStateBase
             return;
         }
 
-        float x = playercontroller.InputX * playercontroller.MoveSpeed;
-        rigidBody.linearVelocity = new Vector2(x, rigidBody.linearVelocity.y);
+        float inputX = playercontroller.InputX;
+        float targetX = inputX * playercontroller.MoveSpeed;
+
+        if (targetX > 0f && playercontroller.IsRightWall)
+            targetX = 0f;
+        else if (targetX < 0f && playercontroller.IsLeftWall)
+            targetX = 0f;
+        
+        rigidBody.linearVelocity = new Vector2(targetX, rigidBody.linearVelocity.y);
     }
 
     public override void Exit()

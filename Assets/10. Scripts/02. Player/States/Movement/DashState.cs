@@ -64,9 +64,16 @@ public class DashState : PlayerStateBase
         float targetSpeed = dashDir * dashSpeed;
 
         float t = dashTimer / playercontroller.DashDuration;
+        float smoothed = Mathf.Pow(t, 2f);
+        
+        float dashVelX = targetSpeed * smoothed;
 
-        float smoothed = Mathf.Pow(t, 2f); 
-        rigidBody.linearVelocity = new Vector2(targetSpeed * smoothed, 0);
+        if (dashVelX > 0f && playercontroller.IsRightWall)
+            dashVelX = 0f;
+        else if (dashVelX < 0f && playercontroller.IsLeftWall)
+            dashVelX = 0f;
+        
+        rigidBody.linearVelocity = new Vector2(dashVelX, 0);
     }
 
     public override void Exit()
