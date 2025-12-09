@@ -47,8 +47,15 @@ public class JumpState : PlayerStateBase
     {
         base.UpdatePhysics();
 
-        float x = playercontroller.InputX * playercontroller.MoveSpeed * 0.7f;
-        rigidBody.linearVelocity = new Vector2(x, rigidBody.linearVelocity.y);
+        float inputX = playercontroller.InputX;
+        float targetX = inputX * playercontroller.MoveSpeed * 0.7f;
+
+        if (targetX > 0f && playercontroller.IsRightWall)
+            targetX = 0f;
+        else if (targetX < 0f && playercontroller.IsLeftWall)
+            targetX = 0f;
+        
+        rigidBody.linearVelocity = new Vector2(targetX, rigidBody.linearVelocity.y);
     }
 
     public override void Exit()

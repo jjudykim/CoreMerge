@@ -8,9 +8,11 @@ public class Managers : SingletonBase<Managers>
 {
     public static Managers Instance => instance;
 
+    public GameManager Game { get; private set; }
     public InputManager Input { get; private set; }
     public CoreDBManager CoreDB { get; private set; }
     public CoreDropManager CoreDrop { get; private set; }
+    
 
     [Header("Drop Tables")] [SerializeField]
     private MonsterTypeDropTable[] monsterDropTables;
@@ -24,11 +26,13 @@ public class Managers : SingletonBase<Managers>
         base.OnInitialize();
         
         // Manager Instantiate
+        Game = new GameManager();
         Input = new InputManager();
         CoreDB = new CoreDBManager();
         CoreDrop = new CoreDropManager();
         
         // Manager Initialize
+        Game.Init();
         CoreDB.Init();
         CoreDrop.Init(monsterDropTables);
     }

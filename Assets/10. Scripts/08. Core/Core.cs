@@ -33,7 +33,7 @@ public class Core : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             // TODO : Inventory Manager 추가 후 주석 해제
-            // Managers.Instance.Inventory.AddCore(coreId);
+            //Managers.Instance.Inventory.AddCore(coreId);
             
             Destroy(gameObject);
         }

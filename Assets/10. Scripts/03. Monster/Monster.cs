@@ -28,7 +28,7 @@ public abstract partial class Monster : MonoBehaviour
     public MonsterType Type => type;
     public Transform HeadUpPivot => headUpPivot;
     public Collider2D MainCollider => mainCollider;
-
+    
     protected virtual void Awake()
     {
         if (stat == null)
@@ -79,22 +79,7 @@ public abstract partial class Monster : MonoBehaviour
     {
         // monsterController.ChangeState(DeadState);
 
-        var droppedCores = Managers.Instance.CoreDrop.GetDropCores(type, 2, 4);
-
-        if (droppedCores == null || droppedCores.Count == 0)
-            return;
-
-        // TODO : GameManager 제작 후에 CorePickup 활성화하기
-        foreach (var core in droppedCores)
-        {
-            if (core == null)
-                continue;
-
-            Vector2 offset = Random.insideUnitCircle * 0.5f;
-            Vector3 spawnPos = transform.position + new Vector3(offset.x, offset.y, 0f);
-            
-            // Managers.Instance.Game.SpawnCorePickup(spawnPos, core.id);
-        }
+        Managers.Instance.Game.OnMonsterDead(this.monsterController);
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D other)
