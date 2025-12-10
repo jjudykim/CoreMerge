@@ -22,9 +22,3 @@ public class SkillData
     public float baseCooldown;
     public float power;
 }
-
-[CreateAssetMenu(fileName = "SkillData", menuName = "Skill/SKillData")]
-public class SkillDataSO : ScriptableObject
-{
-    public SkillData data;
-}

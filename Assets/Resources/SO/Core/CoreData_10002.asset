@@ -9,17 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 03ea3b53da794c939730acc2841a0c80, type: 3}
   m_Name: CoreData_10002
   m_EditorClassIdentifier: Assembly-CSharp::CoreDataSO
   data:
     id: 10002
     coreName: core_little_blue
     tier: 2
-    icon: {fileID: 0}
+    icon: {fileID: -5985950022098159814, guid: b9ddaec9f4ae9df488bc52c123a01acd, type: 3}
     modifier:
-      maxHpBonus: 0
-      attackBonus: 10
+      maxHpBonus: 1
+      attackBonus: 5
       defenseBonus: 0
       critChanceBonus: 0
       critDamageBonus: 0
