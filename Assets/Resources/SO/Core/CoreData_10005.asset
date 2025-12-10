@@ -9,20 +9,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 03ea3b53da794c939730acc2841a0c80, type: 3}
   m_Name: CoreData_10005
   m_EditorClassIdentifier: Assembly-CSharp::CoreDataSO
   data:
     id: 10005
     coreName: core_big_amber
     tier: 5
-    icon: {fileID: 0}
+    icon: {fileID: -8435902292209324209, guid: e7ac9397aa3dd2b41970272cc818ba6b, type: 3}
     modifier:
-      maxHpBonus: 2
+      maxHpBonus: 1
       attackBonus: 15
       defenseBonus: 1
-      critChanceBonus: 10
-      critDamageBonus: 20
-      skillCooldownRate: 20
+      critChanceBonus: 20
+      critDamageBonus: 10
+      skillCooldownRate: 0
       canUseSkill: 0
       skillId: 0

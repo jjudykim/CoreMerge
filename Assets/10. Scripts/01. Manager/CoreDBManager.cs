@@ -85,6 +85,11 @@ public class CoreDBManager
         return null;
     }
 
+    public int GetFirstCoreIdByTier(ECoreTier tier)
+    {
+        return coreDataByTier[tier][0].id;
+    }
+
     public bool HasCore(int id)
     {
         return isInit && coreDataById.ContainsKey(id);
