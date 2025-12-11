@@ -21,8 +21,8 @@ MonoBehaviour:
       maxHpBonus: 1
       attackBonus: 10
       defenseBonus: 0
-      critChanceBonus: 5
-      critDamageBonus: 0
+      critChanceBonus: 0.05
+      critDamageBonus: 0.1
       skillCooldownRate: 0
       canUseSkill: 0
       skillId: 0
