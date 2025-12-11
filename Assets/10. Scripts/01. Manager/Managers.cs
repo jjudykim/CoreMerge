@@ -10,7 +10,8 @@ public class Managers : SingletonBase<Managers>
 
     public GameManager Game { get; private set; }
     public InputManager Input { get; private set; }
-    
+
+    public QuickSlotData QuickSlots { get; private set; }
     public CoreInventoryData CoreInventory { get; private set; }
     public CoreDBManager CoreDB { get; private set; }
     public CoreDropManager CoreDrop { get; private set; }
@@ -31,6 +32,7 @@ public class Managers : SingletonBase<Managers>
         Game = new GameManager();
         Input = new InputManager();
         CoreInventory = new CoreInventoryData(32);
+        QuickSlots = new QuickSlotData(3);
         CoreDB = new CoreDBManager();
         CoreDrop = new CoreDropManager();
         

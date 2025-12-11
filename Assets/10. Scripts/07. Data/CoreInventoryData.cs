@@ -4,10 +4,9 @@ using System.Collections.Generic;
 public class CoreInventoryData : IItemContainer
 {
     private readonly int[] coreIds;
-
     public int Capacity => coreIds.Length;
-
     public event Action OnChanged; 
+    
     public CoreInventoryData(int capacity)
     {
         coreIds = new int[capacity];
@@ -49,8 +48,10 @@ public class CoreInventoryData : IItemContainer
                 remain--;
             }
         }
+
+        if (OnChanged != null) 
+            OnChanged.Invoke();
         
-        OnChanged?.Invoke();
         return true;
     }
 
@@ -72,8 +73,10 @@ public class CoreInventoryData : IItemContainer
                 remain--;
             }
         }
+
+        if (OnChanged != null) 
+            OnChanged.Invoke();
         
-        OnChanged?.Invoke();
         return true;
     }
 
@@ -110,7 +113,10 @@ public class CoreInventoryData : IItemContainer
             return false;
 
         coreIds[index] = 0;
-        OnChanged?.Invoke();
+        
+        if (OnChanged != null) 
+            OnChanged.Invoke();
+        
         return true;
     }
 
@@ -120,7 +126,7 @@ public class CoreInventoryData : IItemContainer
 
         var tierToSlots = new Dictionary<ECoreTier, List<int>>();
 
-        for (int i = 0; i < coreIds[i]; ++i)
+        for (int i = 0; i < coreIds.Length; ++i)
         {
             int coreId = coreIds[i];
             if (coreId == 0)
@@ -141,10 +147,10 @@ public class CoreInventoryData : IItemContainer
             list.Add(i);
         }
 
-        foreach (var kvp in tierToSlots)
+        foreach (var pair in tierToSlots)
         {
-            ECoreTier tier = kvp.Key;
-            var slots = kvp.Value;
+            ECoreTier tier = pair.Key;
+            var slots = pair.Value;
 
             int pairCount = slots.Count / 2;
             if (pairCount <= 0)
@@ -170,7 +176,6 @@ public class CoreInventoryData : IItemContainer
                 coreIds[indexB] = 0;
                 
                 int upgradedCoreId = Managers.Instance.CoreDB.GetFirstCoreIdByTier(nextTier);
-                
                 coreIds[indexA] = upgradedCoreId;
 
                 changed = true;
@@ -178,10 +183,30 @@ public class CoreInventoryData : IItemContainer
         }
 
         if (changed)
-            OnChanged?.Invoke();
+            if (OnChanged != null)
+                OnChanged.Invoke();
 
         return changed;
     }
     
-    
+    public int GetItemIdAt(int index)
+    {
+        if (index < 0 || coreIds.Length <= index)
+            return 0;
+        
+        return coreIds[index];
+    }
+
+    public bool TryAssignAt(int index, int itemId)
+    {
+        if (index < 0 || coreIds.Length <= index)
+            return false;
+
+        coreIds[index] = itemId;
+
+        if (OnChanged != null) 
+            OnChanged.Invoke();
+
+        return true;
+    }
 }

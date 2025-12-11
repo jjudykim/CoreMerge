@@ -13,11 +13,8 @@ public class DashState : PlayerStateBase
     {
         base.Enter();
         //Debug.Log("Entered DashState");
-
-        if (playercontroller.DashRightDown) playercontroller.FacingDir = 1;
-        else if (playercontroller.DashLeftDown) playercontroller.FacingDir = -1;
+        
         dashDir = playercontroller.FacingDir;
-
         dashTimer = playercontroller.DashDuration;
         
         animator.SetTrigger(playercontroller.AnimKeyDash);

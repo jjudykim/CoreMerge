@@ -652,7 +652,6 @@ GameObject:
   - component: {fileID: 1783946962383951606}
   - component: {fileID: 5505422001339847896}
   - component: {fileID: 4503283217196695269}
-  - component: {fileID: 7453911745516971221}
   m_Layer: 5
   m_Name: Scroll View
   m_TagString: Untagged
@@ -749,23 +748,6 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
---- !u!114 &7453911745516971221
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3029224729163735424}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c89d0d108b244507b13e6adc85da2b0b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UIInputHandler
-  raycaster: {fileID: 0}
-  scrollRect: {fileID: 4503283217196695269}
-  cursorSlot: {fileID: 664646793019514834, guid: 685a008bb8d25f44c8f29f15a2c2b761, type: 3}
-  coreInfoPopup: {fileID: 0}
-  hoverDelay: 0.3
 --- !u!1 &4099697680031382542
 GameObject:
   m_ObjectHideFlags: 0
@@ -1016,9 +998,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0384b394141f487baaa45671fb5e9f55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InventoryUIController
-  inventoryRoot: {fileID: 1127862111837089442}
-  inventoryView: {fileID: 3467081176085065432}
-  uiInputHandler: {fileID: 7453911745516971221}
+  inventoryRoot: {fileID: 6533404880073386039}
+  inventoryView: {fileID: 0}
+  uiInputHandler: {fileID: 0}
+  slideDuration: 0.25
+  shownPosition: {x: 0, y: 0}
+  hiddenPosition: {x: 800, y: 0}
 --- !u!1 &8534119733270679343
 GameObject:
   m_ObjectHideFlags: 0
@@ -1120,7 +1105,6 @@ GameObject:
   - component: {fileID: 8564319714387652164}
   - component: {fileID: 5477692915940176257}
   - component: {fileID: 8766907744142655515}
-  - component: {fileID: 3467081176085065432}
   m_Layer: 5
   m_Name: Content
   m_TagString: Untagged
@@ -1185,19 +1169,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.ContentSizeFitter
   m_HorizontalFit: 0
   m_VerticalFit: 2
---- !u!114 &3467081176085065432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9027463614233665136}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b4aabf1515a48a2b9167fbb87a6effd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::UserInventoryView
-  maxStorageSize: 40
-  sizeColumn: 5
-  slotPrefab: {fileID: 664646793019514834, guid: 685a008bb8d25f44c8f29f15a2c2b761, type: 3}
-  slotParent: {fileID: 8564319714387652164}

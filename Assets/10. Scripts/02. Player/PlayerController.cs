@@ -206,8 +206,7 @@ public class PlayerController : MonoBehaviour
     public bool JumpPressed         => input.JumpDown;
     public bool AttackPressed       => input.AttackDown;
     public bool SlideAttackPressed  => input.SlideAttackDown;
-    public bool DashRightDown       => input.DashRightDown;
-    public bool DashLeftDown        => input.DashLeftDown;
+    public bool DashDown       => input.DashDown;
     
     // Etc
     private Vector2 baseColliderOffset;
