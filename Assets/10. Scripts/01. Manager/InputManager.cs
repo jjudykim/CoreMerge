@@ -13,12 +13,9 @@ public class InputManager
     // Slide Down
     public bool SlideAttackDown { get; private set; }
     
-    // DashzL
-    private const float doubleTapThreshold = 0.25f;
-    public bool DashRightDown { get; private set; }
-    public bool DashLeftDown { get; private set; }
-    private float lastTapTime = 0f;
-    private int lastTapDir = 0;
+    // Dash
+    public bool DashDown { get; private set; }
+    private int lastMoveDir = 1;
     
     // UI / QuickSlot
     public bool InventoryToggleDown { get; private set; }
@@ -39,11 +36,16 @@ public class InputManager
             MoveX = Input.GetAxisRaw("Horizontal");
             MoveY = Input.GetAxisRaw("Vertical");
 
+            if (MoveX > 0.01f)
+                lastMoveDir = 1;
+            else if (MoveX < -0.01f)
+                lastMoveDir = -1;
+
             JumpDown = Input.GetKeyDown(KeyCode.Space);
             AttackDown = Input.GetKeyDown(KeyCode.Z);
             SlideAttackDown = Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow);
-            
-            DetectDoubleTapDash();
+
+            DashDown = Input.GetKeyDown(KeyCode.C);
         }
         else
         {
@@ -65,45 +67,22 @@ public class InputManager
         }
     }
 
-    private void DetectDoubleTapDash()
-    {
-        float now = Time.time;
-        int tapDir = 0;
-        
-        bool rightKeyDown = Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow);
-        bool leftKeyDown = Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow);
-
-        if (rightKeyDown) tapDir = 1;
-        else if (leftKeyDown) tapDir = -1;
-
-        if (tapDir == 0)
-            return;
-
-        if (lastTapDir == tapDir && now - lastTapTime <= doubleTapThreshold)
-        {
-            if (tapDir > 0)
-                DashRightDown = true;
-            else
-                DashLeftDown = true;
-        }
-
-        lastTapDir = tapDir;
-        lastTapTime = now;
-    }
-
     private void ClearFrameInputs()
     {
         JumpDown = false;
         AttackDown = false;
         SlideAttackDown = false;
 
+        DashDown = false;
         InventoryToggleDown = false;
         
         QuickSlot1Down = false;
         QuickSlot2Down = false;
         QuickSlot3Down = false;
-        
-        DashRightDown = false;
-        DashLeftDown  = false;
+    }
+
+    public void SetEnable(bool enable)
+    {
+        GamePlayInputEnabled = enable ? true : false;
     }
 }
