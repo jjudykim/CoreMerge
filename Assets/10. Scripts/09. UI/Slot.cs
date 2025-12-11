@@ -1,26 +1,31 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
+using Color = System.Drawing.Color;
 
-public class Slot : MonoBehaviour
+public class Slot : MonoBehaviour, IPointerClickHandler
 {
     [Header("UI")]
+    [SerializeField] private RectTransform canvas;
     [SerializeField] private Image backgroundImage;
     [SerializeField] private Image iconImage;
     //[SerializeField] private TextMeshProUGUI countText;
+
+    public event Action<Slot> OnClicked;
     
     public CoreData Core { get; protected set; }
     public int Count { get; protected set; }
-
     public int Index { get; set; }
 
     public bool IsEmptySlot { get { return Core == null; } }
     public void SetIconImageEnable(bool enable) => iconImage.enabled = enable;
     
     private RectTransform rectTransform;
-
-    private void Start()
+    
+    private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
     }
@@ -69,6 +74,27 @@ public class Slot : MonoBehaviour
     
     public void SetPosition(Vector2 inputPosition)
     {
-        rectTransform.anchoredPosition = inputPosition - new Vector2(rectTransform.sizeDelta.x / 2, rectTransform.sizeDelta.y / 2);
+        if (rectTransform == null)
+            return;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            canvas.transform as RectTransform,
+            inputPosition,
+            null,                     
+            out var localPos);
+
+        rectTransform.anchoredPosition = localPos;
+    }
+
+    public void SetAlpha(float alpha)
+    {
+        backgroundImage.color = new UnityEngine.Color(1, 1, 1, alpha);
+        iconImage.color = new UnityEngine.Color(1, 1, 1, alpha);
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (OnClicked != null) 
+            OnClicked.Invoke(this);
     }
 }

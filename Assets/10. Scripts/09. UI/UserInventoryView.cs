@@ -15,31 +15,23 @@ public class UserInventoryView : InventoryViewBase
     [SerializeField] private Transform slotParent;
     
     private int sizeRow;
-    public Slot[,] SlotsGrid;
+    private Slot[,] slotsGrid;
     
     private void Awake()
     {
         container = Managers.Instance.CoreInventory;
 
-        if (Managers.Instance.CoreInventory != null)
-            Managers.Instance.CoreInventory.OnChanged += Refresh;
     }
-
-    private void OnDestroy()
-    {
-        if (Managers.Instance.CoreInventory != null)
-            Managers.Instance.CoreInventory.OnChanged -= Refresh;
-    }
-
+    
     private void Start()
     {
         sizeRow = maxStorageSize % sizeColumn == 0 ? maxStorageSize / sizeColumn
-            : maxStorageSize / sizeColumn + 1;
+                                                   : maxStorageSize / sizeColumn + 1;
 
         foreach(Transform child in slotParent)
             Destroy(child.gameObject);
         
-        SlotsGrid = new Slot[sizeRow, sizeColumn];
+        slotsGrid = new Slot[sizeRow, sizeColumn];
 
         for (int i = 0; i < maxStorageSize; ++i)
         {
@@ -51,11 +43,17 @@ public class UserInventoryView : InventoryViewBase
             if (row >= sizeRow)
                 break;
             
-            SlotsGrid[row, col] = slot;
+            slotsGrid[row, col] = slot;
             slot.Index = i;
         }
 
         Refresh();
+    }
+
+    private void OnEnable()
+    {
+        if (Managers.Instance.CoreInventory != null)
+            Managers.Instance.CoreInventory.OnChanged += Refresh;
     }
     
     public override void Refresh()
@@ -63,7 +61,7 @@ public class UserInventoryView : InventoryViewBase
         if (container == null)
             return;
         
-        foreach (var slot in SlotsGrid)
+        foreach (var slot in slotsGrid)
             slot.Clear();
 
         var allSlots = container.GetAllSlots();
@@ -77,8 +75,29 @@ public class UserInventoryView : InventoryViewBase
             int row = index / sizeColumn;
             int col = index % sizeColumn;
 
-            Slot slot = SlotsGrid[row, col];
+            Slot slot = slotsGrid[row, col];
             slot.SetItem(slotData.ItemId, slotData.Count);
         }
+    }
+
+    public bool TryGetIndexOfSlot(Slot slot, out int index)
+    {
+        index = -1;
+        if (slot == null || slotsGrid == null)
+            return false;
+
+        for (int row = 0; row < sizeRow; ++row)
+        {
+            for (int col = 0; col < sizeColumn; ++col)
+            {
+                if (slotsGrid[row, col] == slot)
+                {
+                    index = row * sizeColumn + col;
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

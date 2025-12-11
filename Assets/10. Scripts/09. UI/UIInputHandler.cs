@@ -1,7 +1,14 @@
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
+public enum SlotOwner
+{
+    Inventory,
+    QuickSlot
+}
 
 public class UIInputHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
@@ -15,8 +22,23 @@ public class UIInputHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     
     [Header("Hover Setting")]
     [SerializeField] private float hoverDelay = 0.3f;
+    
+    [Header("Reference Setting")]
+    [SerializeField] private UserInventoryView inventoryView;
+    [SerializeField] private QuickSlotView quickSlotView;
+
+    private CoreInventoryData coreInventory => Managers.Instance.CoreInventory;
+    private QuickSlotData quickSlots => Managers.Instance.QuickSlots;
+
+    private bool hasSelection;
+    private SlotOwner selectionOwner;
+    private int selectionIndex;
+    private int selectionItemId;
 
     private Slot startSlot;
+    private SlotOwner startOwner;
+    private int startIndex;
+    
     private bool isCoreDragging = false;
 
     private Slot hoverSlot;
@@ -93,21 +115,28 @@ public class UIInputHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         HideCoreInfo();
 
         startSlot = RaycastSlot(eventData);
-
+        
         if (startSlot == null || startSlot.Core == null)
         {
             isCoreDragging = false;
-            
+
             if (scrollRect != null)
                 scrollRect.OnBeginDrag(eventData);
 
             return;
         }
         
+        if (TryGetOwnerAndIndex(startSlot, out startOwner, out startIndex) == false)
+        {
+            isCoreDragging = false;
+            return;
+        }
+
         isCoreDragging = true;
-        
+
         cursorSlot.SetItem(startSlot.Core.id);
         cursorSlot.SetIconImageEnable(true);
+        cursorSlot.SetAlpha(0.5f);
 
         if (scrollRect != null)
             scrollRect.enabled = false;
@@ -129,7 +158,9 @@ public class UIInputHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
         if (isCoreDragging)
         {
             if (startSlot == null)
+            {
                 ResetCursor();
+            }
             else
             {
                 Slot endSlot = RaycastSlot(eventData);
@@ -138,10 +169,13 @@ public class UIInputHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
                     ResetCursor();
                 else
                 {
-                    if (endSlot.IsEmptySlot)
-                        MoveCore(endSlot);
+                    if (TryGetOwnerAndIndex(endSlot, out var endOwner, out var endIndex) == false)
+                        ResetCursor();
                     else
-                        SwapCore(startSlot, endSlot);
+                    {
+                        HandleDragDrop(startOwner, startIndex, endOwner, endIndex);
+                        ResetCursor();
+                    }
                 }
             }
 
@@ -160,30 +194,126 @@ public class UIInputHandler : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
                 scrollRect.OnEndDrag(eventData);
         }
     }
+
+    private void HandleDragDrop(SlotOwner fromOwner, int fromIndex, SlotOwner toOwner, int toIndex)
+    {
+        if (fromOwner == toOwner && fromIndex == toIndex)
+            return;
+
+        // 인벤토리 → 인벤토리 (슬롯 스왑)
+        if (fromOwner == SlotOwner.Inventory && toOwner == SlotOwner.Inventory)
+        {
+            int itemId = coreInventory.GetItemIdAt(fromIndex);
+            MoveOrSwapInventorySlots(fromIndex, toIndex, itemId);
+        }
+        // 인벤토리 → 퀵슬롯
+        else if (fromOwner == SlotOwner.Inventory && toOwner == SlotOwner.QuickSlot)
+        {
+            int itemId = coreInventory.GetItemIdAt(fromIndex);
+            MoveCoreFromInventoryToQuickSlot(fromIndex, toIndex, itemId);
+        }
+        // 퀵슬롯 → 인벤토리
+        else if (fromOwner == SlotOwner.QuickSlot && toOwner == SlotOwner.Inventory)
+        {
+            int itemId = quickSlots.GetItemIdAt(fromIndex);
+            MoveCoreFromQuickSlotToInventory(fromIndex, toIndex, itemId);
+        }
+        // 퀵슬롯 ↔ 퀵슬롯 (슬롯 스왑)
+        else if (fromOwner == SlotOwner.QuickSlot && toOwner == SlotOwner.QuickSlot)
+        {
+            SwapQuickSlot(fromIndex, toIndex);
+        }
+    }
+
+
     #endregion
     
     #region Slot 유틸 (Move / Swap / Raycast)
-
-    private void MoveCore(Slot endSlot)
+    
+    private bool TryGetOwnerAndIndex(Slot slot, out SlotOwner owner, out int index)
     {
-        endSlot.SetItem(startSlot.Core.id, startSlot.Count);
+        if (inventoryView != null && inventoryView.TryGetIndexOfSlot(slot, out index))
+        {
+            owner = SlotOwner.Inventory;
+            return true;
+        }
+        
+        if (quickSlotView != null && quickSlotView.TryGetIndexOfSlot(slot, out index))
+        {
+            owner = SlotOwner.QuickSlot;
+            return true;
+        }
 
-        startSlot.SetCoreClear();
-        ResetCursor();
+        owner = default;
+        index = -1;
+        return false;
     }
 
-    private void SwapCore(Slot fromSlot, Slot toSlot)
+    private void MoveOrSwapInventorySlots(int fromIndex, int toIndex, int itemId)
     {
-        int toCoreId = toSlot.Core.id;
-        int toCoreCount = Managers.Instance.CoreInventory.GetCount(toCoreId);
+        if (fromIndex == toIndex)
+            return;
+        
+        if (coreInventory == null)
+            return;
 
-        int fromCoreId = cursorSlot.Core.id;
-        int fromCoreCount = Managers.Instance.CoreInventory.GetCount(fromCoreId);
+        int idA = coreInventory.GetItemIdAt(fromIndex);
+        int idB = coreInventory.GetItemIdAt(toIndex);
 
-        fromSlot.SetItem(toCoreId, toCoreCount);
-        toSlot.SetItem(fromCoreId, fromCoreCount);
+        coreInventory.TryAssignAt(fromIndex, idB);
+        coreInventory.TryAssignAt(toIndex, idA);
+    }
+    
+    private void MoveCoreFromInventoryToQuickSlot(int fromIndex, int toIndex, int itemId)
+    {
+        bool cleared = coreInventory.ClearSlot(fromIndex);
+        if (cleared == false)
+            return;
 
-        ResetCursor();
+        int existingId = quickSlots.GetItemIdAt(toIndex);
+        if (existingId != 0)
+        {
+            bool reAdded = coreInventory.TryAdd(existingId, 1);
+            if (reAdded == false)
+                return;
+        }
+
+        quickSlots.TryAssignAt(toIndex, itemId);
+    }
+    
+    private void MoveCoreFromQuickSlotToInventory(int fromIndex, int toIndex, int itemId)
+    {
+        bool cleared = quickSlots.ClearSlot(fromIndex);
+        if (cleared == false)
+            return;
+        
+        if (coreInventory == null)
+            return;
+        
+        int existingId = coreInventory.GetItemIdAt(toIndex);
+        coreInventory.TryAssignAt(toIndex, itemId);
+
+        if (existingId != 0)
+            quickSlots.TryAssignAt(fromIndex, existingId);
+    }
+
+    private void SwapQuickSlot(int indexA, int indexB)
+    {
+        if (indexA == indexB)
+            return;
+
+        int idA = quickSlots.GetItemIdAt(indexA);
+        int idB = quickSlots.GetItemIdAt(indexB);
+
+        quickSlots.TryAssignAt(indexA, idB);
+        quickSlots.TryAssignAt(indexB, idA);
+    }
+
+
+    private void ClearSelection()
+    {
+        hasSelection = false;
+        selectionItemId = 0;
     }
 
     private void ResetCursor()

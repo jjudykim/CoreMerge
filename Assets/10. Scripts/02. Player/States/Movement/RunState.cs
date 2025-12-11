@@ -34,7 +34,7 @@ public class RunState : PlayerStateBase
             return;
         }
         
-        if (playercontroller.DashRightDown || playercontroller.DashLeftDown)
+        if (playercontroller.DashDown)
         {
             stateMachine.ChangeState(playercontroller.DashState);
             return;
