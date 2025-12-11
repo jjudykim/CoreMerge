@@ -36,20 +36,14 @@ public class IdleState : PlayerStateBase
         float x = playercontroller.InputX;
         float y = playercontroller.InputY;
         //Debug.Log($"IdleState ::: InputX : {x} ::: InputY : {y}");
-
-        if (playercontroller.AttackPressed)
-        {
-            stateMachine.ChangeState(playercontroller.AttackState);
-            return;
-        }
-
-        if (playercontroller.JumpPressed && playercontroller.IsGrounded)
+        
+        if (playercontroller.JumpPressed && playercontroller.IsGrounded && y > 0f)
         {
             stateMachine.ChangeState(playercontroller.JumpState);
             return;
         }
-
-        if (playercontroller.DashRightDown || playercontroller.DashLeftDown)
+        
+        if (playercontroller.DashDown)
         {
             dashBufferActive = false;
             dashBufferTimer = 0f;
@@ -58,9 +52,21 @@ public class IdleState : PlayerStateBase
             return;
         }
         
-        if (playercontroller.IsOnLadder && Mathf.Abs(y) >= 0.1f)
+        if (playercontroller.IsOnLadder && y > 0f)
         {
             stateMachine.ChangeState(playercontroller.ClimbState);
+            return;
+        }
+        
+        if (playercontroller.IsOnLadder == false && playercontroller.IsLadderBelow && y < -0.1f)
+        {
+            stateMachine.ChangeState(playercontroller.ClimbState);
+            return;
+        }
+        
+        if (playercontroller.AttackPressed)
+        {
+            stateMachine.ChangeState(playercontroller.AttackState);
             return;
         }
 

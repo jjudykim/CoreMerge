@@ -28,7 +28,7 @@ public abstract partial class Monster : MonoBehaviour
     public MonsterType Type => type;
     public Transform HeadUpPivot => headUpPivot;
     public Collider2D MainCollider => mainCollider;
-
+    
     protected virtual void Awake()
     {
         if (stat == null)
@@ -78,6 +78,8 @@ public abstract partial class Monster : MonoBehaviour
     protected virtual void OnDeath()
     {
         // monsterController.ChangeState(DeadState);
+
+        Managers.Instance.Game.OnMonsterDead(this.monsterController);
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D other)

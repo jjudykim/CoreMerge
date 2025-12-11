@@ -70,7 +70,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 10f;
     [SerializeField] private int facingDir = 1;
     [SerializeField] private Collider2D groundCheckerCollider;
+    [SerializeField] private Collider2D[] wallCheckerCollider;
     [SerializeField] private LayerMask groundLayer;
+
+    [SerializeField] private int groundPhysicsLayer = 6;
+    public int GroundPhysicsLayer => groundPhysicsLayer;
+    
     public float MoveSpeed => moveSpeed;
     public float JumpForce => jumpForce;
     public int FacingDir { get => facingDir; set => facingDir = value; }
@@ -189,6 +194,9 @@ public class PlayerController : MonoBehaviour
     // Status Check
     public bool IsGrounded { get; private set; }
     public bool IsOnLadder { get; private set; }
+    public bool IsLadderBelow { get; private set; }
+    public bool IsLeftWall { get; private set; }
+    public bool IsRightWall { get; private set; }
     public bool IsHurt { get; set; }
     public bool IsDead { get; set; }
     
@@ -198,8 +206,7 @@ public class PlayerController : MonoBehaviour
     public bool JumpPressed         => input.JumpDown;
     public bool AttackPressed       => input.AttackDown;
     public bool SlideAttackPressed  => input.SlideAttackDown;
-    public bool DashRightDown       => input.DashRightDown;
-    public bool DashLeftDown        => input.DashLeftDown;
+    public bool DashDown       => input.DashDown;
     
     // Etc
     private Vector2 baseColliderOffset;
@@ -248,11 +255,19 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        // Status Check
+        CheckIfOnLadder();
+        CheckIfLadderBellow();
+        CheckIfGrounded();
+        CheckIfLeftWall();
+        CheckIfRightWall();
+
+        // State Logic
         UpdateFacing();
         StateMachine.CurrentState.UpdateLogic();
+        
+        // Animation Param
         UpdateAnimationParams();
-        CheckIfOnLadder();
-        CheckIfGrounded();
     }
 
     private void FixedUpdate()
@@ -309,7 +324,17 @@ public class PlayerController : MonoBehaviour
         Collider2D hit = Physics2D.OverlapBox(center, size, 0f, ladderLayer);
         IsOnLadder = hit != null;
         CurrentLadder = hit;
-        // Debug.Log($"CheckIfOnLadder ::: IsOnLadder : {IsOnLadder}");
+    }
+    
+    private void CheckIfLadderBellow()
+    {
+        CircleCollider2D col = groundCheckerCollider as CircleCollider2D;
+        Vector2 center = col.bounds.center;
+        float radius = Mathf.Max(col.bounds.extents.x, col.bounds.extents.y);
+        
+        Collider2D hit = Physics2D.OverlapCircle(center, radius, ladderLayer);
+        IsLadderBelow = hit != null;
+        CurrentLadder = hit;
     }
 
     private void CheckIfGrounded()
@@ -319,6 +344,26 @@ public class PlayerController : MonoBehaviour
         float size = col.radius;
 
         IsGrounded = Physics2D.OverlapCircle(center, size, groundLayer);
+    }
+
+    private void CheckIfLeftWall()
+    {
+        BoxCollider2D leftCol = wallCheckerCollider[0] as BoxCollider2D;
+
+        Vector2 center = leftCol.bounds.center;
+        Vector2 size = leftCol.bounds.size;
+
+        IsLeftWall = Physics2D.OverlapBox(center, size, 0f, groundLayer);
+    }
+
+    private void CheckIfRightWall()
+    {
+        BoxCollider2D rightCol = wallCheckerCollider[1] as BoxCollider2D;
+
+        Vector2 center = rightCol.bounds.center;
+        Vector2 size = rightCol.bounds.size;
+
+        IsRightWall = Physics2D.OverlapBox(center, size, 0f, groundLayer);
     }
 
     private void OnDrawGizmos()

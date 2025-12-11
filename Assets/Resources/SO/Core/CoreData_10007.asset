@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03ea3b53da794c939730acc2841a0c80, type: 3}
+  m_Name: CoreData_10007
+  m_EditorClassIdentifier: Assembly-CSharp::CoreDataSO
+  data:
+    id: 10007
+    coreName: core_big_emerald
+    tier: 7
+    icon: {fileID: 9118398129847045519, guid: 0499f47b04620ee409045c1457478c96, type: 3}
+    modifier:
+      maxHpBonus: 2
+      attackBonus: 20
+      defenseBonus: 1
+      critChanceBonus: 0.3
+      critDamageBonus: 0.5
+      skillCooldownRate: 0
+      canUseSkill: 0
+      skillId: 0

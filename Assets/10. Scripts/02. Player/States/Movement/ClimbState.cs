@@ -4,6 +4,11 @@ public class ClimbState : PlayerStateBase
 {
     private float originalGravityScale; // 원래의 중력값
     private float climbSpeed;
+
+    private int playerLayer;
+    private int groundLayer;
+
+    private bool enteredFromAbove = false;
     
     public ClimbState(PlayerController player, PlayerStateMachine stateMachine) : base(player, stateMachine)
     {
@@ -13,6 +18,11 @@ public class ClimbState : PlayerStateBase
     {
         base.Enter();
         //Debug.Log("Entered ClimbState");
+
+        playerLayer = playercontroller.gameObject.layer;
+        groundLayer = playercontroller.GroundPhysicsLayer;
+        
+        Physics2D.IgnoreLayerCollision(playerLayer, groundLayer, true);
         
         originalGravityScale = rigidBody.gravityScale;
         rigidBody.gravityScale = 0;
@@ -21,6 +31,25 @@ public class ClimbState : PlayerStateBase
 
         climbSpeed = playercontroller.ClimbSpeed;
         animator.speed = 0f;
+
+        enteredFromAbove = playercontroller.IsLadderBelow 
+                           && playercontroller.IsGrounded == false;
+        if (enteredFromAbove && playercontroller.CurrentLadder != null)
+        {
+            var ladderBounds = playercontroller.CurrentLadder.bounds;
+            var playerBounds = playercontroller.Collider.bounds;
+
+            Vector3 pos = playercontroller.transform.position;
+
+            pos.x = ladderBounds.center.x;
+
+            float playerHalfHeight = playerBounds.extents.y;
+            float ladderTop = ladderBounds.max.y;
+
+            pos.y = ladderTop + playerHalfHeight;
+
+            playercontroller.transform.position = pos;
+        }
         
         animator.Play("Ladder");
     }
@@ -32,30 +61,12 @@ public class ClimbState : PlayerStateBase
         float x = playercontroller.InputX;
         float y = playercontroller.InputY;
 
-        if (playercontroller.IsGrounded)
-        {
-            if (y < 0.1f)
-            {
-                stateMachine.ChangeState(playercontroller.IdleState);
-                return;
-            }
-        }
-
         if (!playercontroller.IsOnLadder)
         {
             animator.speed = 1f;
 
             if (playercontroller.IsGrounded)
-            {
-                if (Mathf.Abs(x) >= 0.1f)
-                    stateMachine.ChangeState(playercontroller.RunState);
-                else
-                    stateMachine.ChangeState(playercontroller.IdleState);
-            }
-            else
-            {
-                stateMachine.ChangeState(playercontroller.JumpState);
-            }
+                stateMachine.ChangeState(playercontroller.IdleState);
 
             return;
         }
@@ -71,7 +82,6 @@ public class ClimbState : PlayerStateBase
         base.UpdatePhysics();
         
         float y = playercontroller.InputY;
-
         float verticalVelocity = 0f;
 
         if (Mathf.Abs(y) >= 0.1f)
@@ -83,6 +93,8 @@ public class ClimbState : PlayerStateBase
     public override void Exit()
     {
         base.Exit();
+        
+        Physics2D.IgnoreLayerCollision(playerLayer, groundLayer, false);
         
         rigidBody.gravityScale = originalGravityScale;
         animator.speed = 1f;
