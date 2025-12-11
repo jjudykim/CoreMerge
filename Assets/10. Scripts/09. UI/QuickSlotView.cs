@@ -30,12 +30,6 @@ public class QuickSlotView : InventoryViewBase
             Managers.Instance.QuickSlots.OnChanged += Refresh;
     }
 
-    private void OnDisable()
-    {
-        if (Managers.Instance.QuickSlots != null)
-            Managers.Instance.QuickSlots.OnChanged -= Refresh;
-    }
-
     private void CreateSlots()
     {
         foreach (Transform child in slotParent)
@@ -75,14 +69,6 @@ public class QuickSlotView : InventoryViewBase
             Slot slot = Slots[index];
             slot.SetItem(slotData.ItemId, slotData.Count);
         }
-    }
-
-    public Slot GetSlot(int index)
-    {
-        if (index < 0 || Slots.Length <= index)
-            return null;
-        
-        return Slots[index];
     }
     
     public bool TryGetIndexOfSlot(Slot slot, out int index)

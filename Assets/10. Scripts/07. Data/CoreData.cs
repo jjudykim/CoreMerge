@@ -26,6 +26,26 @@ public class CoreStatModifier
     [Header("Skill Unlock")]
     public bool canUseSkill;
     public int skillId;
+
+    public void Clear()
+    {
+        maxHpBonus = 0;
+        attackBonus = 0;
+        defenseBonus = 0;
+        critChanceBonus = 0;
+        critDamageBonus = 0;
+        skillCooldownRate = 0;
+    }
+
+    public void Add(CoreStatModifier other)
+    {
+        maxHpBonus += other.maxHpBonus;
+        attackBonus += other.attackBonus;
+        defenseBonus += other.defenseBonus;
+        critChanceBonus += other.critChanceBonus;
+        critDamageBonus += other.critDamageBonus;
+        skillCooldownRate += other.skillCooldownRate;
+    }
 }
 
 
