@@ -40,7 +40,7 @@ public class CoreDropManager
             return null;
         }
 
-        if (dropTableByType.TryGetValue(type, out var table))
+        if (dropTableByType.TryGetValue(type, out var table) == false)
         {
             Debug.Log($"CoreDropManager ::: {type}에 해당하는 드랍테이블 없음");
             return null;
@@ -67,7 +67,7 @@ public class CoreDropManager
             return result;
         }
 
-        if (dropTableByType.TryGetValue(type, out var table))
+        if (dropTableByType.TryGetValue(type, out var table) == false)
         {
             Debug.Log($"CoreDropManager ::: {type}에 해당하는 드랍테이블 없음");
             return null;
