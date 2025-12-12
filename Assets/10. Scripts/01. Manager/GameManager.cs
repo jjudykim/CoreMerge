@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class GameManager
 {
-    [SerializeField] private Core corePrefab;
-
+    private Core corePrefab;
+    
     public void Init()
     {
-        
+        corePrefab = Resources.Load<GameObject>("Prefabs/Core").GetComponent<Core>();    
     }
 
     public void SpawnCore(Vector3 position, int coreId)
