@@ -9,22 +9,25 @@ public class Player : MonoBehaviour
 
     private PlayerController PlayerController { get; set; }
 
-    [Header("Stat")] 
-    [SerializeField] private PlayerStat playerStat;
-    public PlayerStat PlayerStat => playerStat;
+    private PlayerRuntimeData runtimeData;
+    public PlayerStat PlayerStat => runtimeData.Stat;
+    public int CurrentHp => PlayerStat.CurrentHp;
+    
+    private int baseMaxHp;
 
     private QuickSlotData QuickSlots => Managers.Instance.QuickSlots;
     private CoreDBManager CoreDB => Managers.Instance.CoreDB;
 
     private CoreStatModifier coreBonus;
 
-    public int FinalMaxHp { get => playerStat.MaxHp + coreBonus.maxHpBonus; }
-    public int FinalAttack { get => playerStat.Attack + coreBonus.attackBonus; }
-    public int FinalDefense { get => playerStat.Defense + coreBonus.defenseBonus; }
-    public float FinalCritChance { get => Mathf.Clamp01(playerStat.CritChance + coreBonus.critChanceBonus); }
-    public float FinalCritDamageMultiplier { get => Mathf.Max(1f, playerStat.CritDamageMultiplier + coreBonus.critDamageBonus); }
-    public float FinalSkillCooldownReduction { get => Mathf.Clamp(playerStat.SkillCooldownReduction + coreBonus.skillCooldownRate, 0f, 0.9f); }
+    public int FinalMaxHp { get => PlayerStat.MaxHp + coreBonus.maxHpBonus; }
+    public int FinalAttack { get => PlayerStat.Attack + coreBonus.attackBonus; }
+    public int FinalDefense { get => PlayerStat.Defense + coreBonus.defenseBonus; }
+    public float FinalCritChance { get => Mathf.Clamp01(PlayerStat.CritChance + coreBonus.critChanceBonus); }
+    public float FinalCritDamageMultiplier { get => Mathf.Max(1f, PlayerStat.CritDamageMultiplier + coreBonus.critDamageBonus); }
+    public float FinalSkillCooldownReduction { get => Mathf.Clamp(PlayerStat.SkillCooldownReduction + coreBonus.skillCooldownRate, 0f, 0.9f); }
 
+    public event Action<int, int> OnLifeChanged;
 
     private void Awake()
     {
@@ -39,22 +42,13 @@ public class Player : MonoBehaviour
         PlayerController = GetComponent<PlayerController>();
         coreBonus = new CoreStatModifier();
 
-        if (playerStat == null)
-        {
-            playerStat = new PlayerStat
-            {
-                MaxHp = 3,
-                Attack = 10,
-                Defense = 0,
-                CritChance = 0,
-                CritDamageMultiplier = 0,
-                SkillCooldownReduction = 0,
-            };
+        runtimeData = Managers.Instance.PlayerData;
 
-            playerStat.CurrentHp = playerStat.MaxHp;
-        }
-        // AttackInfo 데이터 삽입
+        baseMaxHp = PlayerStat.MaxHp;
+        
         RecalculateCoreBonus();
+
+        NotifyLifeChanged();
     }
 
     private void OnEnable()
@@ -96,9 +90,22 @@ public class Player : MonoBehaviour
             
             coreBonus.Add(bonus);
         }
-        
-        playerStat.CurrentHp = FinalMaxHp;
+
+        int newMaxLife = baseMaxHp + coreBonus.maxHpBonus;
+        PlayerStat.MaxHp = newMaxLife;
+
+        if (runtimeData.CurrentLife > PlayerStat.MaxHp)
+            runtimeData.CurrentLife = PlayerStat.MaxHp;
+
+        NotifyLifeChanged();
     }
+
+    private void NotifyLifeChanged()
+    {
+        if (OnLifeChanged != null) 
+            OnLifeChanged.Invoke(runtimeData.CurrentLife, PlayerStat.MaxHp);
+    }
+
     public void DamageToEnemy(Collider2D targetCollider, string attackInfoKey)
     {
         CombatEvent sendEvent = new()
@@ -147,14 +154,11 @@ public class Player : MonoBehaviour
             return;
 
         PlayerController.ApplyDamageGating();
-        
-        int reduced = (int)Mathf.Max(1f, damage - FinalDefense);
-        playerStat.CurrentHp -= reduced;
-        
-        Debug.Log($"[Player] TakeDamage :: income={damage}, def={playerStat.Defense}, " +
-                  $"final={reduced}, hp={playerStat.CurrentHp}/{playerStat.MaxHp}");
 
-        if (playerStat.IsDead())
+        //runtimeData.CurrentLife -= 1;
+        NotifyLifeChanged();
+
+        if (runtimeData.CurrentLife <= 0)
             PlayerController.Die();
         else
             PlayerController.Hurt();
@@ -162,12 +166,11 @@ public class Player : MonoBehaviour
 
     public void TakeHeal(int heal)
     {
-        float before = playerStat.CurrentHp;
-        playerStat.CurrentHp += heal;
+        runtimeData.CurrentLife += heal;
 
-        if (playerStat.CurrentHp > FinalMaxHp)
-            playerStat.CurrentHp = FinalMaxHp;
-        
-        Debug.Log($"[Player] TakeHeal :: amount={heal}, hp={before} -> {playerStat.CurrentHp}/{playerStat.MaxHp}");
+        if (runtimeData.CurrentLife > FinalMaxHp)
+            runtimeData.CurrentLife = FinalMaxHp;
+
+        NotifyLifeChanged();
     }
 }

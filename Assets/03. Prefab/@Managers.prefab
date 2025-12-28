@@ -10,6 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4888338576424231455}
   - component: {fileID: 1818537053098759368}
+  - component: {fileID: 525089255924064908}
+  - component: {fileID: 3016023382025064520}
+  - component: {fileID: 255203264106665723}
   m_Layer: 0
   m_Name: '@Managers'
   m_TagString: Untagged
@@ -44,3 +47,66 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a0197d8940b41998496068171315826, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Managers
+  monsterDropTables:
+  - monsterType: 0
+    dropChance: 1
+    tierEntries:
+    - tier: 1
+      weight: 0.3
+    - tier: 2
+      weight: 0.4
+    - tier: 3
+      weight: 0.2
+    - tier: 4
+      weight: 0.1
+  - monsterType: 1
+    dropChance: 1
+    tierEntries:
+    - tier: 3
+      weight: 0.3
+    - tier: 4
+      weight: 0.4
+    - tier: 5
+      weight: 0.2
+    - tier: 6
+      weight: 0.1
+  sceneLoadManager: {fileID: 3016023382025064520}
+  flowManager: {fileID: 255203264106665723}
+  uiManager: {fileID: 525089255924064908}
+--- !u!114 &525089255924064908
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 420850985624804786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f929b4cac8e34167a46f38d8ee39e257, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIManager
+  hudPrefab: {fileID: 107387891960179407, guid: 138b77d682d5cb94e99c2440d0896379, type: 3}
+--- !u!114 &3016023382025064520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 420850985624804786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97e3e4cdde2d7184fb1e57812c275a0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SceneLoadManager
+--- !u!114 &255203264106665723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 420850985624804786}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 55cb75fd3d3f4ffc876204ab7d854d36, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameFlowManager

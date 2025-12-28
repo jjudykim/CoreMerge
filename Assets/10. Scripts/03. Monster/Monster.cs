@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public enum MonsterType
@@ -20,6 +21,7 @@ public abstract partial class Monster : MonoBehaviour
     [SerializeField] protected Transform headUpPivot;
     [SerializeField] protected Collider2D mainCollider;
     [SerializeField] protected MonsterController monsterController;
+    [SerializeField] protected Animator animator;
     
     [Header("ContactDamage")]
     [SerializeField] protected bool contactDamageEnabled = true;
@@ -28,7 +30,11 @@ public abstract partial class Monster : MonoBehaviour
     public MonsterType Type => type;
     public Transform HeadUpPivot => headUpPivot;
     public Collider2D MainCollider => mainCollider;
-    
+    public Animator Animator => animator;
+    public SpriteRenderer SpriteRenderer { get; private set; }
+    public Material InstanceMaterial { get; private set; }
+    public int Attack => stat.Attack;
+
     protected virtual void Awake()
     {
         if (stat == null)
@@ -44,6 +50,7 @@ public abstract partial class Monster : MonoBehaviour
         }
         
         mainCollider = GetComponentInChildren<Collider2D>();
+        InstanceMaterial = GetComponentInChildren<SpriteRenderer>().material;
     }
 
     protected virtual void Start()
@@ -60,9 +67,6 @@ public abstract partial class Monster : MonoBehaviour
     {
         int reduced = (int)Mathf.Max(1f, damage - stat.Defense);
         stat.CurrentHp -= reduced;
-        
-        Debug.Log($"[Monster] TakeDamage :: income={damage}, def={stat.Defense}, " +
-                  $"final={reduced}, hp={stat.CurrentHp}/{stat.MaxHp}");
 
         if (stat.IsDead())
             OnDeath();
@@ -72,14 +76,37 @@ public abstract partial class Monster : MonoBehaviour
 
     protected virtual void OnHurt()
     {
-        // monsterController.ChangeState(HurtState);
+        if (monsterController != null)
+            monsterController.OnHurt();
     }
     
     protected virtual void OnDeath()
     {
-        // monsterController.ChangeState(DeadState);
+        if (monsterController != null)
+            monsterController.OnDeath();
 
+        DropCores();
+        
         Managers.Instance.Game.OnMonsterDead(this.monsterController);
+    }
+    
+    public virtual void PerformAttack(Vector2 targetPos)
+    {
+    }
+
+    private void DropCores()
+    {
+        int minDrop = 2;
+        int maxDrop = 4;
+
+        var cores = Managers.Instance.CoreDrop.GetDropCores(type, minDrop, maxDrop);
+        if (cores == null || cores.Count == 0)
+            return;
+
+        foreach (var core in cores)
+        {
+            Managers.Instance.Game.SpawnCore(transform.position, core.id);
+        }
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D other)

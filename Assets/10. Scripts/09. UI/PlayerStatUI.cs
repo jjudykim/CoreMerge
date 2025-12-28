@@ -4,11 +4,23 @@ using UnityEngine.UI;
 
 public class PlayerStatUI : MonoBehaviour
 {
+    private Player boundPlayer;
+    
+    [Header("UI")]
     [SerializeField] private TMP_Text attackText;
     [SerializeField] private TMP_Text defenseText;
     [SerializeField] private TMP_Text critChanceText;
     [SerializeField] private TMP_Text critDamageText;
     [SerializeField] private TMP_Text skillCollDownText;
+
+    private bool isSubScribedQuickSlots = false;
+
+    public void Bind(Player player)
+    {
+        boundPlayer = player;
+        SubscribeQuickSlotsOnce();
+        Refresh();
+    }
 
     private void Start()
     {
@@ -20,18 +32,48 @@ public class PlayerStatUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (Managers.Instance.QuickSlots != null)
-            Managers.Instance.QuickSlots.OnChanged += Refresh;
+        SubscribeQuickSlotsOnce();
 
         Refresh();
     }
 
-    private void Refresh()
+    private void OnDestroy()
     {
-        if (Player.LocalPlayer == null)
+        UnsubscribeQuickSlots();
+    }
+
+    private void SubscribeQuickSlotsOnce()
+    {
+        if (isSubScribedQuickSlots)
             return;
 
-        var p = Player.LocalPlayer;
+        if (Managers.Instance != null && Managers.Instance.QuickSlots != null)
+        {
+            Managers.Instance.QuickSlots.OnChanged += Refresh;
+            isSubScribedQuickSlots = true;
+        }
+    }
+
+    private void UnsubscribeQuickSlots()
+    {
+        if (isSubScribedQuickSlots == false)
+            return;
+        
+        if (Managers.Instance != null && Managers.Instance.QuickSlots != null)
+            Managers.Instance.QuickSlots.OnChanged -= Refresh;
+
+        isSubScribedQuickSlots = false;
+    }
+
+    private void Refresh()
+    {
+        Player p = boundPlayer;
+
+        if (p == null)
+            p = Player.LocalPlayer;
+
+        if (p == null)
+            return;
 
         int addedAttack = p.FinalAttack - p.PlayerStat.Attack;
         int addedDefense = p.FinalDefense - p.PlayerStat.Defense;

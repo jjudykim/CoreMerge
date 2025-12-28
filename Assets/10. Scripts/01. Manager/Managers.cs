@@ -6,6 +6,8 @@ using UnityEngine;
 [DefaultExecutionOrder(-100)]
 public class Managers : SingletonBase<Managers>
 {
+    public PlayerRuntimeData PlayerData { get; private set; }
+
     public static Managers Instance => instance;
 
     public GameManager Game { get; private set; }
@@ -15,13 +17,47 @@ public class Managers : SingletonBase<Managers>
     public CoreInventoryData CoreInventory { get; private set; }
     public CoreDBManager CoreDB { get; private set; }
     public CoreDropManager CoreDrop { get; private set; }
+    public SceneLoadManager Scene { get; private set; }
+    public GameFlowManager Flow { get; private set; }
+    public UIManager UI { get; private set; }
     
-
-    [Header("Drop Tables")] [SerializeField]
-    private MonsterTypeDropTable[] monsterDropTables;
+    private void InitPlayerData()
+    {
+        if (PlayerData == null)
+            PlayerData = new PlayerRuntimeData();
+    }
+    
+    [Header("Drop Tables")] 
+    [SerializeField] private MonsterTypeDropTable[] monsterDropTables;
+    
+    [Header("Scene Manager")]
+    [SerializeField] private SceneLoadManager sceneLoadManager;
+    [SerializeField] private GameFlowManager flowManager;
+    
+    [Header("UIManager")]
+    [SerializeField] private UIManager uiManager;
+    
     protected override void Awake()
     {
         base.Awake();
+        
+        InitPlayerData();
+
+        if (sceneLoadManager == null)
+            sceneLoadManager = gameObject.AddComponent<SceneLoadManager>();
+
+        if (flowManager == null)
+            flowManager = gameObject.AddComponent<GameFlowManager>();
+        
+        if (uiManager == null)
+            uiManager = gameObject.AddComponent<UIManager>();
+        
+        Scene = sceneLoadManager;
+        Flow = flowManager;
+        UI = uiManager;
+        
+        UI.EnsureHUD();
+        //UI.RebindToCurrentPlayer();
     }
 
     protected override void OnInitialize()
