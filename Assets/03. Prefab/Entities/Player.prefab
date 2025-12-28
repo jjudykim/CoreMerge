@@ -347,14 +347,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1ae2184b17f2484dad7d3aa76b58df9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  playerStat:
-    maxHp: 100
-    attack: 10
-    defense: 2
-    currentHp: 100
-    critChance: 30
-    critDamageMultiplier: 2
-    skillCooldownReduction: 5
 --- !u!114 &7809420978975115094
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -377,7 +369,7 @@ MonoBehaviour:
   groundCheckerCollider: {fileID: 1305691928400747620}
   wallCheckerCollider:
   - {fileID: 3646268808483359911}
-  - {fileID: 0}
+  - {fileID: 8912543410985014486}
   groundLayer:
     serializedVersion: 2
     m_Bits: 64

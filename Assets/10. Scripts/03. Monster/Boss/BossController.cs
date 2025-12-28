@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem.XR.Haptics;
 
 public enum BossPhase
 {
@@ -106,6 +107,9 @@ public class BossController : MonoBehaviour
 
     private void Update()
     {
+        if(Input.GetKeyDown(KeyCode.F1))
+            StateMachine.ChangeState(P1RangeState);
+        
         StateMachine.CurrentState.UpdateLogic();
     }
 

@@ -383,7 +383,9 @@ public class PlayerController : MonoBehaviour
     private IEnumerator CoSetInvincible(float duration)
     {
         IsInvincible = true;
+        Debug.Log("무적상태");
         yield return new WaitForSeconds(duration);
+        Debug.Log("무적해제");
         IsInvincible = false;
     }
 

@@ -1254,8 +1254,8 @@ TextureImporter:
         y: 1023
         width: 138
         height: 93
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -1276,8 +1276,8 @@ TextureImporter:
         y: 1023
         width: 138
         height: 93
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -1298,8 +1298,8 @@ TextureImporter:
         y: 1023
         width: 138
         height: 93
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      alignment: 7
+      pivot: {x: 0.5, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
@@ -2219,7 +2219,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 3588
-        y: 651
+        y: 650
         width: 138
         height: 93
       alignment: 7
@@ -2592,7 +2592,7 @@ TextureImporter:
       name: Voidborn Goddess-SpriteSheet_85
       rect:
         serializedVersion: 2
-        x: 1794
+        x: 1795
         y: 558
         width: 138
         height: 93
@@ -3011,7 +3011,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1794
-        y: 465
+        y: 464
         width: 138
         height: 93
       alignment: 7
@@ -3033,7 +3033,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 1932
-        y: 465
+        y: 464
         width: 138
         height: 93
       alignment: 7
@@ -3692,7 +3692,7 @@ TextureImporter:
       name: Voidborn Goddess-SpriteSheet_135
       rect:
         serializedVersion: 2
-        x: 966
+        x: 967
         y: 0
         width: 138
         height: 93

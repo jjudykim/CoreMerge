@@ -11,13 +11,14 @@ GameObject:
   - component: {fileID: 2430782236986588915}
   - component: {fileID: 7406081091687487239}
   - component: {fileID: 4304994807184166889}
+  - component: {fileID: 8523100027859982218}
   m_Layer: 0
   m_Name: HitBox
   m_TagString: MonsterProjectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2430782236986588915
 Transform:
   m_ObjectHideFlags: 0
@@ -94,6 +95,34 @@ MonoBehaviour:
   owner: {fileID: 0}
   useOwnerAttackStat: 1
   fixedDamage: 1
+  startDisabled: 1
+--- !u!50 &8523100027859982218
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3463533491853659915}
+  m_BodyType: 2
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &5049975377453318703
 GameObject:
   m_ObjectHideFlags: 0
@@ -168,6 +197,7 @@ GameObject:
   - component: {fileID: 4957412938975964457}
   - component: {fileID: 161679211670369039}
   - component: {fileID: 2089577826238967196}
+  - component: {fileID: 1347197134313943467}
   m_Layer: 0
   m_Name: Goblin
   m_TagString: Monster
@@ -195,6 +225,7 @@ Transform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4957412938975964457
 SpriteRenderer:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -240,6 +271,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_Sprite: {fileID: 1749530928411294406, guid: 889aef1bcb8d3204883f8aefe007ebac, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -249,7 +281,6 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 0
   m_SpriteSortPoint: 0
 --- !u!95 &161679211670369039
 Animator:
@@ -310,3 +341,16 @@ CapsuleCollider2D:
   m_Offset: {x: 0.02769208, y: -0.573617}
   m_Size: {x: 1.4581704, y: 2.2151246}
   m_Direction: 0
+--- !u!114 &1347197134313943467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7569515137197399858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9011ac53e6d77e34392796a064b1eae9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterAnimEventReceiver
+  hitBox: {fileID: 4304994807184166889}

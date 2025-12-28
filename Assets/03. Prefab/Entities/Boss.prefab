@@ -57,6 +57,7 @@ MonoBehaviour:
   headUpPivot: {fileID: 4378291047635068759}
   mainCollider: {fileID: 1498687926881321671}
   monsterController: {fileID: 0}
+  animator: {fileID: 0}
   contactDamageEnabled: 1
   contactDamageAmount: 1
   bossController: {fileID: 3834446882760050433}
@@ -193,39 +194,20 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8523583640566628886, guid: 401761195c6204a49adef91ba7545923, type: 3}
+      propertyPath: owner
+      value: 
+      objectReference: {fileID: 575186565979792079}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1087802256164028856, guid: 401761195c6204a49adef91ba7545923, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7413595606251707731}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 401761195c6204a49adef91ba7545923, type: 3}
 --- !u!70 &1498687926881321671 stripped
 CapsuleCollider2D:
   m_CorrespondingSourceObject: {fileID: 131261892153145538, guid: 401761195c6204a49adef91ba7545923, type: 3}
   m_PrefabInstance: {fileID: 1521721088256047621}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1875356886790732733 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1087802256164028856, guid: 401761195c6204a49adef91ba7545923, type: 3}
-  m_PrefabInstance: {fileID: 1521721088256047621}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7413595606251707731
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1875356886790732733}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f068f66d37d4a00aa2b9e26b8175094, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BossHitBox
-  owner: {fileID: 575186565979792079}
-  baseDamage: 1
-  useOwnerStat: 0
 --- !u!212 &2652685740978391875 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 3588813529575731526, guid: 401761195c6204a49adef91ba7545923, type: 3}
