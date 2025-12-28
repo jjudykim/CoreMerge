@@ -73,16 +73,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonsterController
   owner: {fileID: 4371174497685543931}
   moveSpeed: 1.5
-  traceRange: 10
-  attackRange: 2
+  traceRange: 8
+  attackRange: 1.5
   patrolPoint: {fileID: 7401322867521727031}
   idleWaitTime: 4
   chaseSpeed: 3
   chaseAnimSpeed: 2
-  attackCooldown: 3
-  attackDuration: 1.2
+  attackCooldown: 5
+  attackDuration: 1
   hurtDuration: 0.5
   rigidBody: {fileID: 4672025871317172708}
+  hitbox: {fileID: 6714830949277660216}
 --- !u!50 &4672025871317172708
 Rigidbody2D:
   serializedVersion: 5
@@ -118,10 +119,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 3027616171174579757}
     m_Modifications:
-    - target: {fileID: 4304994807184166889, guid: 54ddf1b7e8f535948a69f58ab1f81abe, type: 3}
-      propertyPath: owner
+    - target: {fileID: 1347197134313943467, guid: 54ddf1b7e8f535948a69f58ab1f81abe, type: 3}
+      propertyPath: monsterController
       value: 
-      objectReference: {fileID: 4371174497685543931}
+      objectReference: {fileID: 6467639345314492676}
     - target: {fileID: 5018962197041432517, guid: 54ddf1b7e8f535948a69f58ab1f81abe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -181,6 +182,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3028204313249174656, guid: 54ddf1b7e8f535948a69f58ab1f81abe, type: 3}
   m_PrefabInstance: {fileID: 7390889519775710161}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6714830949277660216 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4304994807184166889, guid: 54ddf1b7e8f535948a69f58ab1f81abe, type: 3}
+  m_PrefabInstance: {fileID: 7390889519775710161}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ac6d3b5e8d6df3498e9725fc5009c54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MonsterHitBox
 --- !u!95 &7255247043395717342 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 161679211670369039, guid: 54ddf1b7e8f535948a69f58ab1f81abe, type: 3}

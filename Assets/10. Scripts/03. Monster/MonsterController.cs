@@ -55,8 +55,11 @@ public class MonsterController : MonoBehaviour
     
     private Animator animator;
     
+    [Header("HitBox")]
+    [SerializeField] private MonsterHitBox hitbox;
+    
     // FSM
-    private MonsterState currentState;
+    public MonsterState CurrentState { get; private set; }
     private float stateTimer;
     private float attackTimer;
 
@@ -79,6 +82,9 @@ public class MonsterController : MonoBehaviour
 
         if (rigidBody == null)
             rigidBody = GetComponent<Rigidbody2D>();
+        
+        if (hitbox == null)
+            hitbox = GetComponentInChildren<MonsterHitBox>(true);
 
         pointA = transform.position;
         if (patrolPoint != null)
@@ -101,7 +107,7 @@ public class MonsterController : MonoBehaviour
         if (attackCooldownTimer > 0f)
             attackCooldownTimer -= Time.deltaTime;
 
-        switch (currentState)
+        switch (CurrentState)
         {
             case MonsterState.Idle:
                 UpdateIdle();
@@ -123,50 +129,53 @@ public class MonsterController : MonoBehaviour
                 break;
         }
     }
-
-    // ReSharper disable Unity.PerformanceAnalysis
+    
     private void ChangeState(MonsterState newState)
     {
-        if (currentState == newState)
+        if (CurrentState == newState)
             return;
         
         // Exit
-        switch (currentState)
+        switch (CurrentState)
         {
             case MonsterState.Chase:
                 animator.speed = NORMAL_ANIM_SPEED;
                 break;
+            case MonsterState.Attack:
+                hitbox.ForceDisableHitBox();
+                break;
         }
-
-        currentState = newState;
+        
+        CurrentState = newState;
         stateTimer = 0f;
 
         ResetAnimTrigger();
 
-        switch (currentState)
+        switch (CurrentState)
         {
             case MonsterState.Idle:
-                Debug.Log("Idle State Entry");
+                hitbox.ForceDisableHitBox();
                 animator.SetTrigger(IDLE);
                 break;
             case MonsterState.Patrol:
-                Debug.Log("Patrol State Entry");
+                hitbox.ForceDisableHitBox();
                 animator.SetTrigger(WALK);
                 break;
             case MonsterState.Chase:
-                Debug.Log("Chase State Entry");
+                hitbox.ForceDisableHitBox();
                 animator.SetTrigger(CHASE);
                 break;
             case MonsterState.Attack:
-                Debug.Log("Chase State Attack");
                 attackCooldownTimer = attackCooldown;
                 animator.SetTrigger(ATTACK);
                 didAttackThisState = false;
                 break;
             case MonsterState.Hurt:
+                hitbox.ForceDisableHitBox();
                 animator.SetTrigger(HURT);
                 break;
             case MonsterState.Death:
+                hitbox.ForceDisableHitBox();
                 animator.SetTrigger(DEATH);
                 Owner.MainCollider.enabled = false;
                 break;
@@ -341,8 +350,10 @@ public class MonsterController : MonoBehaviour
 
     public void OnHurt()
     {
-        if (currentState == MonsterState.Death)
+        if (CurrentState == MonsterState.Death)
             return;
+        
+        hitbox.ForceDisableHitBox();
 
         StartCoroutine(HitEffectCoroutine());
         ApplyKnockback();
@@ -351,8 +362,10 @@ public class MonsterController : MonoBehaviour
     
     public void OnDeath()
     {
-        if (currentState == MonsterState.Death)
+        if (CurrentState == MonsterState.Death)
             return;
+        
+        hitbox.ForceDisableHitBox();
         
         ChangeState(MonsterState.Death);
     }

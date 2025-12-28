@@ -33,7 +33,6 @@ public abstract partial class Monster : MonoBehaviour
     public Animator Animator => animator;
     public SpriteRenderer SpriteRenderer { get; private set; }
     public Material InstanceMaterial { get; private set; }
-    
     public int Attack => stat.Attack;
 
     protected virtual void Awake()
@@ -51,6 +50,7 @@ public abstract partial class Monster : MonoBehaviour
         }
         
         mainCollider = GetComponentInChildren<Collider2D>();
+        InstanceMaterial = GetComponentInChildren<SpriteRenderer>().material;
     }
 
     protected virtual void Start()
