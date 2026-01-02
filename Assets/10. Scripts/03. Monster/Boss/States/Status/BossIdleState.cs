@@ -58,14 +58,11 @@ public class BossIdleState : BossStateBase
 
     private void SelectPhase1Pattern()
     {
-        // TODO : Phase1 테스트용
-        stateMachine.ChangeState(bosscontroller.P1DashAttackState);
-        
-        //int pattern = Random.Range(0, 2);
-        //if (pattern == 0)
-        //    stateMachine.ChangeState(bosscontroller.P1DashAttackState);
-        //else
-        //    stateMachine.ChangeState(bosscontroller.P1RangeState);
+        int pattern = Random.Range(0, 2);
+        if (pattern == 0)
+            stateMachine.ChangeState(bosscontroller.Ph1DashAttackState);
+        else
+            stateMachine.ChangeState(bosscontroller.Ph1RangeState);
     }
     
     private void SelectPhase2Pattern()
@@ -73,8 +70,8 @@ public class BossIdleState : BossStateBase
         int pattern = Random.Range(0, 2);
         
         if (pattern == 0)
-            stateMachine.ChangeState(bosscontroller.P2RangeState);
+            stateMachine.ChangeState(bosscontroller.Ph2RangeState);
         else
-            stateMachine.ChangeState(bosscontroller.P2HandState);
+            stateMachine.ChangeState(bosscontroller.Ph2HandState);
     }
 }
