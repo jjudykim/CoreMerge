@@ -4,7 +4,12 @@ public class Boss : Monster
 {
     [Header("Boss Only")]
     [SerializeField] private BossController bossController;
+    
+    [Header("Phase Setting")]
+    [SerializeField, Range(0f, 1f)] private float phase2Threshold = 0.5f;
 
+    private bool phase2Triggered;
+    
     public BaseStat Stat => stat;
     
     protected override void Awake()
@@ -13,33 +18,34 @@ public class Boss : Monster
         
         bossController = GetComponent<BossController>();
         contactDamageEnabled = false;
+        phase2Triggered = false;
     }
 
     public override void TakeDamage(int damage)
     {
+        if (bossController != null && bossController.CurrentPhase == BossPhase.Dead)
+            return;
+
+        if (bossController != null)
+        {
+            bool isIdle = bossController.StateMachine.CurrentState == bossController.IdleState;
+            if (isIdle == false)
+                return;
+        }
+
         base.TakeDamage(damage);
 
-        if (Stat.IsDead())
-            HandlePhaseOrDeath();
-        else
+        if (bossController != null && bossController.CurrentPhase == BossPhase.Phase1
+                                   && phase2Triggered == false)
         {
-            // TODO : 나중에 공격 중이 아닌 상태에서 유효타를 맞았을 경우에 Hurt 상태 적용되도록 Logic 변경
-            // bossController.Hurt();
-        }
-    }
+            float hpRatio = (float)Stat.CurrentHp / Stat.MaxHp;
 
-    private void HandlePhaseOrDeath()
-    {
-        switch (bossController.CurrentPhase)
-        {
-            case BossPhase.Phase1:
+            if (hpRatio <= phase2Threshold)
+            {
+                phase2Triggered = true;
                 bossController.ChangePhase(BossPhase.Phase2);
-                Stat.CurrentHp = Stat.MaxHp;
-                break;
-            case BossPhase.Phase2:
-                bossController.ChangePhase(BossPhase.Dead);
-                bossController.Die();
-                break;
+                bossController.StateMachine.ChangeState(bossController.PhaseTransitionState);
+            }
         }
     }
 }
