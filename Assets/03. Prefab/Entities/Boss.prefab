@@ -62,6 +62,7 @@ MonoBehaviour:
   contactDamageEnabled: 1
   contactDamageAmount: 1
   bossController: {fileID: 3834446882760050433}
+  phase2Threshold: 0.5
 --- !u!114 &3834446882760050433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,11 +87,11 @@ MonoBehaviour:
   projectileSpawnPoint: {fileID: 8228468290150112465}
   projectilePrefab: {fileID: 4391058494848249379, guid: f9f2453ded5388541a4b342cf2a7e28d, type: 3}
   rangeProjectileCount: 5
-  rangeFireInterval: 0.4
+  rangeFireInterval: 0.15
   rangeProjectileSpeed: 8
   rangeTurnRate: 360
-  rangeLifeTime: 10
-  rangeAfterDelay: 0.2
+  rangeLifeTime: 2
+  rangeAfterDelay: 0.1
 --- !u!50 &1867310398873191938
 Rigidbody2D:
   serializedVersion: 5
@@ -267,6 +268,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c802e7b18dc147468a964575b280e98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossAnimEventReceiver
+  boss: {fileID: 3834446882760050433}
 --- !u!212 &2652685740978391875 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 3588813529575731526, guid: 401761195c6204a49adef91ba7545923, type: 3}
