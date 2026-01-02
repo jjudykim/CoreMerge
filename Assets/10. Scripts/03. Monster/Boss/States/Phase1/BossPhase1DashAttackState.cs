@@ -77,7 +77,7 @@ public class BossPhase1DashAttackState : BossStateBase
                 attackTimer = bosscontroller.AttackDuration;
             
                 animator.ResetTrigger(bosscontroller.AnimKeyForward);
-                animator.SetTrigger(bosscontroller.AnimKeyAttack);
+                animator.SetTrigger(bosscontroller.AnimKeyPh1Attack);
                 return;
             }
 
@@ -99,7 +99,7 @@ public class BossPhase1DashAttackState : BossStateBase
     {
         base.Exit();
 
-        animator.ResetTrigger(bosscontroller.AnimKeyAttack);
+        animator.ResetTrigger(bosscontroller.AnimKeyPh1Attack);
         ResetAlpha();
     }
 
@@ -121,18 +121,6 @@ public class BossPhase1DashAttackState : BossStateBase
             // TODO : 추후 Material 효과 변경 적용
         }
     }
-    
-    // private void CheckDashComplete()
-    // {
-    //    Vector2 current = bosscontroller.transform.position;
-    //    float distance = Vector2.Distance(current, targetPosition);
-    //    float arriveThreshold = 0.1f;
-    //    
-    //    if (distance <= arriveThreshold)
-    //    {
-    //        
-    //    }
-    //}
     
     private void UpdateAttack()
     {

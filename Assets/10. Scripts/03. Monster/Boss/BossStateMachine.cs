@@ -14,7 +14,7 @@ public class BossStateMachine
     {
         if (CurrentState == newState)
             return;
-
+        
         CurrentState.Exit();
         CurrentState = newState;
         CurrentState.Enter();

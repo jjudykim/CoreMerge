@@ -8,12 +8,12 @@ public abstract class BossStateBase : IBossState
     protected Collider2D collider;
     protected Animator animator;
 
-    protected BossStateBase(BossController boss, BossStateMachine stateMachine)
+    protected BossStateBase(BossController bossController, BossStateMachine stateMachine)
     {
-        this.bosscontroller = boss;
+        this.bosscontroller = bossController;
         this.stateMachine = stateMachine;
-        this.collider = boss.Collider;
-        this.animator = boss.Animator;
+        this.collider = bossController.Collider;
+        this.animator = bossController.Animator;
     }
 
     public virtual void Enter()
