@@ -4,8 +4,8 @@ public class BossIdleState : BossStateBase
 {
     private float waitTimer;
 
-    private float minWaitTime = 5f;
-    private float maxWaitTime = 2f;
+    private float minWaitTime = 2f;
+    private float maxWaitTime = 5f;
     public BossIdleState(BossController boss, BossStateMachine stateMachine) : base(boss, stateMachine)
     {
     }
@@ -39,21 +39,21 @@ public class BossIdleState : BossStateBase
     private void SelectNextPattern()
     {
         // Test용
-        SelectPhase1Pattern();
+        //SelectPhase1Pattern();
         
-        //switch (bosscontroller.CurrentPhase)
-        //{
-        //    case BossPhase.Phase1:
-        //        SelectPhase1Pattern();
-        //        break;
-        //    case BossPhase.Phase2:
-        //        SelectPhase2Pattern();
-        //        break;
-        //    case BossPhase.Dead:
-        //        // TODO : Dead Phase라면 실제 DeadState로 넘길까?? 고민중
-        //        break;
-        //        
-        //}
+        switch (bosscontroller.CurrentPhase)
+        {
+            case BossPhase.Phase1:
+                SelectPhase1Pattern();
+                break;
+            case BossPhase.Phase2:
+                SelectPhase2Pattern();
+                break;
+            case BossPhase.Dead:
+                // TODO : Dead Phase라면 실제 DeadState로 넘길까?? 고민중
+                break;
+                
+        }
     }
 
     private void SelectPhase1Pattern()

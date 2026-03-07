@@ -11,15 +11,16 @@ public class MonsterHitBox : MonoBehaviour
 
     [Header("Runtime (Read-only)")] 
     [SerializeField] private bool startDisabled = true;
-
-    private Collider2D hitCollider;
+    [SerializeField] private Collider2D hitCollider; 
+    
     
     private void Awake()
     {
         if (owner == null)
             owner = GetComponentInParent<Monster>();
         
-        hitCollider = GetComponent<BoxCollider2D>();
+        if (hitCollider = null)
+            hitCollider = GetComponent<Collider2D>();
 
         if (startDisabled)
             DisableHitBox();
@@ -35,8 +36,7 @@ public class MonsterHitBox : MonoBehaviour
     {
         if (other.CompareTag("Player") == false)
             return;
-
-        Debug.Log(other.name);
+        
         int damage = fixedDamage;
 
         if (useOwnerAttackStat && owner != null)
@@ -57,7 +57,21 @@ public class MonsterHitBox : MonoBehaviour
         owner = monster;
     }
 
-    protected internal void EnableHitBox() => hitCollider.enabled = true;
-    protected internal void DisableHitBox() => hitCollider.enabled = false;
-    public void ForceDisableHitBox() => DisableHitBox();
+    protected internal void EnableHitBox()
+    {
+        if (hitCollider != null) 
+            hitCollider.enabled = true;
+    }
+
+    protected internal void DisableHitBox()
+    {
+        if (hitCollider != null)
+            hitCollider.enabled = false;
+    }
+
+    public void ForceDisableHitBox()
+    {
+        if (hitCollider != null)
+            DisableHitBox();
+    }
 }

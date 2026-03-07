@@ -28,12 +28,26 @@ public class CombatSystem : SingletonBase<CombatSystem>
         {
             case EventType.DamageEvent:
             {
-                if (monster.Type != MonsterType.BOSS)
+                //if (monster.Type != MonsterType.BOSS)
+                //{
+                //    
+                //}
+                int actualDamage = monster.TakeDamage(combatEvent.Amount);
+                Debug.Log($"[CombatSystem] {monster.gameObject.name}이(가) {actualDamage}의 데미지를 입었습니다.");
+
+                if (actualDamage > 0 && damagePopupPrefab != null)
                 {
-                    FloatingText popUp = Instantiate(damagePopupPrefab);
-                    popUp.Show($"{combatEvent.Amount}", Color.orange, monster.HeadUpPivot.position);
+                    var ftObj = Instantiate(damagePopupPrefab, monster.HeadUpPivot.position, Quaternion.identity);
+                    var ft = ftObj.GetComponent<FloatingText>();
+
+                    Color textColor = combatEvent.IsCritical ? Color.yellow : Color.white;
+                    string message = actualDamage.ToString();
+
+                    if (combatEvent.IsCritical)
+                        message = "CRIT!\n" + message;
+                    
+                    ft.Show(message, textColor, combatEvent.Position);
                 }
-                monster.TakeDamage(combatEvent.Amount);
                 break;
             }
             default:

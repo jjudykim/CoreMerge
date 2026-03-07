@@ -6,12 +6,16 @@ using UnityEngine;
 [DefaultExecutionOrder(-100)]
 public class Managers : SingletonBase<Managers>
 {
+    [SerializeField] private GameObject playerPrefab;
+    public GameObject PlayerPrefab => playerPrefab;
+    
     public PlayerRuntimeData PlayerData { get; private set; }
 
     public static Managers Instance => instance;
 
     public GameManager Game { get; private set; }
     public InputManager Input { get; private set; }
+    public SaveManager Save { get; private set; }
 
     public QuickSlotData QuickSlots { get; private set; }
     public CoreInventoryData CoreInventory { get; private set; }
@@ -40,6 +44,9 @@ public class Managers : SingletonBase<Managers>
     protected override void Awake()
     {
         base.Awake();
+
+        //if (instance != null)
+        //    return;
         
         InitPlayerData();
 
@@ -55,9 +62,6 @@ public class Managers : SingletonBase<Managers>
         Scene = sceneLoadManager;
         Flow = flowManager;
         UI = uiManager;
-        
-        UI.EnsureHUD();
-        //UI.RebindToCurrentPlayer();
     }
 
     protected override void OnInitialize()
@@ -67,6 +71,7 @@ public class Managers : SingletonBase<Managers>
         // Manager Instantiate
         Game = new GameManager();
         Input = new InputManager();
+        Save = new SaveManager();
         CoreInventory = new CoreInventoryData(32);
         QuickSlots = new QuickSlotData(3);
         CoreDB = new CoreDBManager();
@@ -74,6 +79,7 @@ public class Managers : SingletonBase<Managers>
         
         // Manager Initialize
         Game.Init();
+        Save.Init();
         CoreDB.Init();
         CoreDrop.Init(monsterDropTables);
     }

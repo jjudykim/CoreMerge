@@ -11,14 +11,26 @@ public class BossController : MonoBehaviour
 {
     #region Animation Key String
     private static readonly int IDLE = Animator.StringToHash("Idle");
+    private static readonly int HURT = Animator.StringToHash("Hurt");
+    private static readonly int DEAD = Animator.StringToHash("Dead");
     private static readonly int FORWARD = Animator.StringToHash("Forward");
     private static readonly int PH1ATTACK = Animator.StringToHash("Ph1Attack");
     private static readonly int PH1RANGE = Animator.StringToHash("Ph1Range");
+    private static readonly int PHASECHANGE_DESPAWN = Animator.StringToHash("PhaseChange_Despawn");
+    private static readonly int PHASECHANGE_SPAWN = Animator.StringToHash("PhaseChange_Spawn");
+    private static readonly int PH2IDLE = Animator.StringToHash("Ph2Idle");
+    private static readonly int PH2ATTACK = Animator.StringToHash("Ph2Attack");
 
     public int AnimKeyIdle => IDLE;
+    public int AnimKeyHurt => HURT;
+    public int AnimKeyDead => DEAD;
     public int AnimKeyForward => FORWARD;
     public int AnimKeyPh1Attack => PH1ATTACK;
     public int AnimKeyPh1Range => PH1RANGE;
+    public int AnimKeyPhaseChange1 => PHASECHANGE_DESPAWN;
+    public int AnimKeyPhaseChange2 => PHASECHANGE_SPAWN;
+    public int AnimKeyPh2Idle => PH2IDLE;
+    public int AnimKeyPh2Attack => PH2ATTACK;
     #endregion
     
     public Boss Boss { get; private set; }
@@ -79,9 +91,24 @@ public class BossController : MonoBehaviour
     public float RangeTurnRate => rangeTurnRate;
     public float RangeLifeTime => rangeLifeTime;
     public float RangeAfterDelay => rangeAfterDelay;
-    
-        
-    
+
+
+    [Header("Phase2 Hand settings")] 
+    [SerializeField] private BossHandProjectile handPrefab;
+    [SerializeField] private int minHandCount = 3;
+    [SerializeField] private int maxHandCount = 5;
+    [SerializeField] private float spawnInterval = 0.8f;
+    [SerializeField] private float spawnY = 10f;
+    [SerializeField] private float spawnMinX = -10f;
+    [SerializeField] private float spawnMaxX = 10f;
+
+    public BossHandProjectile HandPrefab => handPrefab;
+    public int MinHandCount => minHandCount;
+    public int MaxHandCount => maxHandCount;
+    public float SpawnInterval => spawnInterval;
+    public float SpawnY => spawnY;
+    public float SpawnMinX => spawnMinX;
+    public float SpawnMaxX => spawnMaxX;
     
     // ---------------------------------------------------------
     // States
@@ -104,6 +131,9 @@ public class BossController : MonoBehaviour
         Boss = GetComponent<Boss>();
         StateMachine = new BossStateMachine();
         OriginPosition = transform.position;
+
+        if (playerTarget == null && Player.LocalPlayer != null)
+            playerTarget = Player.LocalPlayer.transform;
         
         // Create State
         IdleState = new BossIdleState(this, StateMachine);
@@ -125,7 +155,7 @@ public class BossController : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.F1))
-            StateMachine.ChangeState(Ph1RangeState);
+            StateMachine.ChangeState(PhaseTransitionState);
         StateMachine.CurrentState.UpdateLogic();
     }
 
@@ -150,5 +180,17 @@ public class BossController : MonoBehaviour
     {
         if (StateMachine.CurrentState == Ph1RangeState)
             Ph1RangeState.OnAnimEvent_FireEnd();
+    }
+
+    public void OnAnimEvent_HideStart()
+    {
+        if (StateMachine.CurrentState == PhaseTransitionState)
+            PhaseTransitionState.OnAnimEvent_HideStart();
+    }
+
+    public void OnAnimEvent_HideEnd()
+    {
+        if (StateMachine.CurrentState == PhaseTransitionState)
+            PhaseTransitionState.OnAnimEvent_HideEnd();
     }
 }

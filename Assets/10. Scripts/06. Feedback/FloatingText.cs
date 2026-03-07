@@ -24,7 +24,9 @@ public class FloatingText : MonoBehaviour
     public void Show(string message, Color color, Vector3 worldPosition)
     {
         text.SetText(message);
-        originColor = text.color;
+        text.color = color;
+        originColor = color;
+        
         transform.position = worldPosition;
         StartCoroutine(AnimateCoroutine());
     }

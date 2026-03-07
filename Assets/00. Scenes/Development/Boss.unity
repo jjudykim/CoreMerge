@@ -419,7 +419,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 107387891960179407, guid: 138b77d682d5cb94e99c2440d0896379, type: 3}
       propertyPath: m_Name
-      value: HUD
+      value: Canvas_HUD
       objectReference: {fileID: 0}
     - target: {fileID: 1900333085701174995, guid: 138b77d682d5cb94e99c2440d0896379, type: 3}
       propertyPath: m_Pivot.x
@@ -741,6 +741,7 @@ GameObject:
   - component: {fileID: 796625670}
   - component: {fileID: 796625672}
   - component: {fileID: 796625671}
+  - component: {fileID: 796625673}
   m_Layer: 5
   m_Name: HpBar
   m_TagString: Untagged
@@ -805,6 +806,22 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 796625669}
   m_CullTransparentMesh: 1
+--- !u!114 &796625673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 796625669}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e8f1fd8ecbd22a4baccc3928163a888, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossHpBarUI
+  boss: {fileID: 7696580878949856403}
+  hpBarRect: {fileID: 796625670}
+  leftPadding: 10
+  rightPaddingMax: 10
 --- !u!1 &961739749
 GameObject:
   m_ObjectHideFlags: 0
@@ -1146,7 +1163,7 @@ GameObject:
   - component: {fileID: 1804180501}
   - component: {fileID: 1804180500}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Canvas_Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1502,6 +1519,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 575186565979792079, guid: 9ce9faf4074554849be9211e02dea8f0, type: 3}
+      propertyPath: stat.maxHp
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 575186565979792079, guid: 9ce9faf4074554849be9211e02dea8f0, type: 3}
+      propertyPath: stat.defense
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 575186565979792079, guid: 9ce9faf4074554849be9211e02dea8f0, type: 3}
+      propertyPath: stat.currentHp
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 3177600254287776344, guid: 9ce9faf4074554849be9211e02dea8f0, type: 3}
       propertyPath: m_Name
       value: Boss

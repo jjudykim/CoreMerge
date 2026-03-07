@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 public class Player : MonoBehaviour
@@ -11,8 +12,9 @@ public class Player : MonoBehaviour
 
     private PlayerRuntimeData runtimeData;
     public PlayerStat PlayerStat => runtimeData.Stat;
-    public int CurrentHp => PlayerStat.CurrentHp;
-    
+    public int CurrentHp => runtimeData.CurrentLife;
+
+    private const int DEFAULT_BASE_MAX_HP = 3;
     private int baseMaxHp;
 
     private QuickSlotData QuickSlots => Managers.Instance.QuickSlots;
@@ -20,19 +22,22 @@ public class Player : MonoBehaviour
 
     private CoreStatModifier coreBonus;
 
-    public int FinalMaxHp { get => PlayerStat.MaxHp + coreBonus.maxHpBonus; }
-    public int FinalAttack { get => PlayerStat.Attack + coreBonus.attackBonus; }
-    public int FinalDefense { get => PlayerStat.Defense + coreBonus.defenseBonus; }
-    public float FinalCritChance { get => Mathf.Clamp01(PlayerStat.CritChance + coreBonus.critChanceBonus); }
-    public float FinalCritDamageMultiplier { get => Mathf.Max(1f, PlayerStat.CritDamageMultiplier + coreBonus.critDamageBonus); }
-    public float FinalSkillCooldownReduction { get => Mathf.Clamp(PlayerStat.SkillCooldownReduction + coreBonus.skillCooldownRate, 0f, 0.9f); }
+    public int FinalMaxHp => PlayerStat.MaxHp + coreBonus.maxHpBonus;
+    public int FinalAttack => PlayerStat.Attack + coreBonus.attackBonus;
+    public int FinalDefense => PlayerStat.Defense + coreBonus.defenseBonus;
+    public float FinalCritChance => Mathf.Clamp01(PlayerStat.CritChance + coreBonus.critChanceBonus);
+    public float FinalCritDamageMultiplier => Mathf.Max(1f, PlayerStat.CritDamageMultiplier + coreBonus.critDamageBonus);
+    public float FinalSkillCooldownReduction => Mathf.Clamp(PlayerStat.SkillCooldownReduction + coreBonus.skillCooldownRate, 0f, 0.9f);
 
     public event Action<int, int> OnLifeChanged;
 
     private void Awake()
     {
         if (LocalPlayer == null)
+        {
             LocalPlayer = this;
+            DontDestroyOnLoad(gameObject);
+        }
         else
         {
             Destroy(gameObject);
@@ -44,17 +49,63 @@ public class Player : MonoBehaviour
 
         runtimeData = Managers.Instance.PlayerData;
 
-        baseMaxHp = PlayerStat.MaxHp;
+        baseMaxHp = DEFAULT_BASE_MAX_HP;
         
         RecalculateCoreBonus();
+        
+        if (runtimeData.CurrentLife <= 0)
+            runtimeData.CurrentLife = PlayerStat.MaxHp;
 
         NotifyLifeChanged();
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnEnable()
     {
         if (QuickSlots != null)
             QuickSlots.OnChanged += RecalculateCoreBonus;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        
+        if (QuickSlots != null)
+            QuickSlots.OnChanged -= RecalculateCoreBonus;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        RestoreFullHealth();
+        InitPosition();
+    }
+
+    private void RestoreFullHealth()
+    {
+        if (runtimeData == null || PlayerStat == null)
+            return;
+
+        runtimeData.CurrentLife = FinalMaxHp;
+        
+        NotifyLifeChanged();
+    }
+
+    private void InitPosition()
+    {
+        var spawnPoint = FindFirstObjectByType<PlayerSpawnPoint>();
+
+        if (spawnPoint != null)
+        {
+            var rb = PlayerController.Rigidbody;
+            if (rb != null)
+            {
+                rb.linearVelocity = Vector2.zero;
+                rb.position = spawnPoint.transform.position;
+            }
+            
+            transform.position = spawnPoint.transform.position;
+        }
     }
 
     private void RecalculateCoreBonus()
@@ -77,8 +128,7 @@ public class Player : MonoBehaviour
                 continue;
 
             var m = core.modifier;
-
-            CoreStatModifier bonus = new CoreStatModifier
+            coreBonus.Add(new CoreStatModifier
             {
                 maxHpBonus = m.maxHpBonus,
                 attackBonus = m.attackBonus,
@@ -86,36 +136,44 @@ public class Player : MonoBehaviour
                 critChanceBonus = m.critChanceBonus,
                 critDamageBonus = m.critDamageBonus,
                 skillCooldownRate = m.skillCooldownRate
-            };
-            
-            coreBonus.Add(bonus);
+            });
         }
-
-        int newMaxLife = baseMaxHp + coreBonus.maxHpBonus;
-        PlayerStat.MaxHp = newMaxLife;
-
-        if (runtimeData.CurrentLife > PlayerStat.MaxHp)
-            runtimeData.CurrentLife = PlayerStat.MaxHp;
-
+        
         NotifyLifeChanged();
     }
 
     private void NotifyLifeChanged()
     {
         if (OnLifeChanged != null) 
-            OnLifeChanged.Invoke(runtimeData.CurrentLife, PlayerStat.MaxHp);
+            OnLifeChanged.Invoke(runtimeData.CurrentLife, FinalMaxHp);
     }
 
     public void DamageToEnemy(Collider2D targetCollider, string attackInfoKey)
     {
+        bool isCritical;
+        int finalDamage = GetCalculatedDamage(attackInfoKey, out isCritical);
+
         CombatEvent sendEvent = new()
         {
             Type = EventType.DamageEvent,
-            Amount = GetRandomDamage(attackInfoKey),
+            Amount = finalDamage,
             Position = targetCollider.transform.position,
+            IsCritical = isCritical
         };
 
         CombatSystem.Instance.ToMonster(targetCollider, sendEvent);
+    }
+
+    private int GetCalculatedDamage(string key, out bool isCritical)
+    {
+        float baseDamage = FinalAttack;
+        
+        float damageAfterCrit = CalculateDamageWithCore(baseDamage, out isCritical);
+
+        float variance = Random.Range(0.9f, 1.1f);
+        float finalDamage = damageAfterCrit * variance;
+
+        return Mathf.Max(1, Mathf.RoundToInt(finalDamage));
     }
 
     private int GetRandomDamage(string key)
@@ -130,8 +188,8 @@ public class Player : MonoBehaviour
         
         int iFinalDamage = Mathf.Max(1, Mathf.RoundToInt(finalDamage));
 
-        Debug.Log($"[Player] Damage Calc ::: base = {baseDamage}, crit = {isCritical}, " +
-                     $"variance={variance:F2}, final={iFinalDamage}");
+        //Debug.Log($"[Player] Damage Calc ::: base = {baseDamage}, crit = {isCritical}, " +
+        //             $"variance={variance:F2}, final={iFinalDamage}");
 
         return iFinalDamage;
     }
@@ -155,7 +213,7 @@ public class Player : MonoBehaviour
 
         PlayerController.ApplyDamageGating();
 
-        //runtimeData.CurrentLife -= 1;
+        runtimeData.CurrentLife -= 1;
         NotifyLifeChanged();
 
         if (runtimeData.CurrentLife <= 0)

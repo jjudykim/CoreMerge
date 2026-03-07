@@ -1,26 +1,45 @@
+using System.Collections;
+using UnityEngine;
+
 public class BossDeadState : BossStateBase
 {
+    private Coroutine deadCo;
     public BossDeadState(BossController boss, BossStateMachine stateMachine) : base(boss, stateMachine)
     {
     }
 
-    public void Enter()
+    public override void Enter()
     {
-        throw new System.NotImplementedException();
+        base.Enter();
+
+        if (bosscontroller.Collider != null)
+            bosscontroller.Collider.enabled = false;
+        
+        FollowCamera followCam = Camera.main.GetComponent<FollowCamera>();
+        if (followCam != null)
+        {
+            followCam.FocusOnTarget(bosscontroller.transform, 2f, 5f);
+        }
+
+        bosscontroller.Animator.SetTrigger(bosscontroller.AnimKeyDead);
+        deadCo = bosscontroller.StartCoroutine(DeadSequence());
     }
 
-    public void Exit()
+    public override void Exit()
     {
-        throw new System.NotImplementedException();
+        base.Exit();
+        if (deadCo != null)
+        {
+            bosscontroller.StopCoroutine(deadCo);
+            deadCo = null;
+        }
     }
 
-    public void UpdateLogic()
+    private IEnumerator DeadSequence()
     {
-        throw new System.NotImplementedException();
-    }
+        yield return new WaitForSeconds(2.0f);
 
-    public void UpdatePhysics()
-    {
-        throw new System.NotImplementedException();
+        Managers.Instance.Game.OnBossDead();
+        Object.Destroy(bosscontroller.gameObject);
     }
 }

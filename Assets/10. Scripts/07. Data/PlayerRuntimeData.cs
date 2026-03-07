@@ -9,6 +9,16 @@ public class PlayerRuntimeData
 
     public PlayerRuntimeData()
     {
+        InitializeDefault();
+    }
+
+    public void ResetData()
+    {
+        InitializeDefault();
+    }
+
+    private void InitializeDefault()
+    {
         Stat = new PlayerStat
         {
             MaxHp = 3,

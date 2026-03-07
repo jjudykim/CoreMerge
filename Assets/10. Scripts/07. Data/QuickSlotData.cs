@@ -14,6 +14,12 @@ public class QuickSlotData : IItemContainer
         coreIds = new int[capacity];
     }
 
+    public void ClearAllSlots()
+    {
+        Array.Clear(coreIds, 0, coreIds.Length);
+        OnChanged?.Invoke();
+    }
+
     public bool TryAdd(int itemId, int count = 1)
     {
         if (count <= 0)
