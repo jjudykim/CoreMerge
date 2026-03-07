@@ -19,14 +19,14 @@ public class BossHpBarUI : MonoBehaviour
 
     private void Update()
     {
-        float bossHp = boss.Stat.CurrentHp / boss.Stat.MaxHp;
+        float bossHp = boss.Stat.MaxHp > 0 ? (float)boss.Stat.CurrentHp / boss.Stat.MaxHp : 0f;
         SetHPRatio(bossHp);
     }
 
     public void SetHPRatio(float ratio)
     {
         ratio = Mathf.Clamp01(ratio);
-
+        
         float right = Mathf.Lerp(parentWidth - leftPadding, rightPaddingMax, ratio);
 
         hpBarRect.offsetMin = new Vector2(leftPadding, hpBarRect.offsetMin.y);

@@ -36,6 +36,7 @@ public class CoreDBManager
         coreDataById.Clear();
         coreDataByTier.Clear();
 
+        // 1. Resources 폴더 내의 모든 코어 SO를 한 번에 로드
         CoreDataSO[] allCoreData = Resources.LoadAll<CoreDataSO>("SO/Core");
         if (allCoreData == null || allCoreData.Length == 0)
         {
@@ -44,6 +45,7 @@ public class CoreDBManager
             return;
         }
         
+        // 2. ID를 키로 하여 Dictionary에 캐싱 (O(1) 검색용)
         foreach(var so in allCoreData)
         {
             CoreData data = so.data;
@@ -56,7 +58,8 @@ public class CoreDBManager
             }
 
             coreDataById.Add(id, so.data);
-
+            
+            // 3. 티어별로 그룹화 (랜덤 드랍 시스템용)
             if (coreDataByTier.TryGetValue(data.tier, out var list) == false)
             {
                 list = new List<CoreData>();

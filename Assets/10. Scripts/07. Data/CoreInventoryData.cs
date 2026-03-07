@@ -12,6 +12,49 @@ public class CoreInventoryData : IItemContainer
         coreIds = new int[capacity];
     }
 
+    public void ResetInventory()
+    {
+        Array.Clear(coreIds, 0, coreIds.Length);
+        OnChanged?.Invoke();
+    }
+
+    public void SortByTier()
+    {
+        // 1. 현재 인벤토리의 모든 아이템 정보를 가져와서
+        List<int> items = new List<int>();
+        for (int i = 0; i < coreIds.Length; ++i)
+        {
+            if (coreIds[i] != 0)
+                items.Add(coreIds[i]);
+        }
+        
+        // 2. 티어 기준으로 내림차순
+        items.Sort((a, b) =>
+        {
+            CoreData dataA = Managers.Instance.CoreDB.GetCoreDataOrNull(a);
+            CoreData dataB = Managers.Instance.CoreDB.GetCoreDataOrNull(b);
+
+            if (dataA == null || dataB == null)
+                return 0;
+            
+            int tierCompare = dataB.tier.CompareTo(dataA.tier);
+
+            if (tierCompare == 0)
+                return a.CompareTo(b);
+
+            return tierCompare;
+        });
+        
+        // 3. 인벤토리 배열 초기화 및 정렬된 아이템 재배치
+        Array.Clear(coreIds, 0, coreIds.Length);
+        for (int i = 0; i < items.Count; ++i)
+        {
+            coreIds[i] = items[i];
+        }
+
+        OnChanged?.Invoke();
+    }
+
     private int GetTotalCount()
     {
         int total = 0;
@@ -182,9 +225,7 @@ public class CoreInventoryData : IItemContainer
             }
         }
 
-        if (changed)
-            if (OnChanged != null)
-                OnChanged.Invoke();
+        SortByTier();
 
         return changed;
     }
@@ -210,3 +251,4 @@ public class CoreInventoryData : IItemContainer
         return true;
     }
 }
+

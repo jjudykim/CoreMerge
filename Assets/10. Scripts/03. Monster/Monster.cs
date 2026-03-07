@@ -63,15 +63,17 @@ public abstract partial class Monster : MonoBehaviour
         Monster.RemoveMonster(this);
     }
 
-    public virtual void TakeDamage(int damage)
+    public virtual int TakeDamage(int damage)
     {
-        int reduced = (int)Mathf.Max(1f, damage - stat.Defense);
+        int reduced = (int)Mathf.Max(0f, damage - stat.Defense);
         stat.CurrentHp -= reduced;
 
         if (stat.IsDead())
             OnDeath();
         else
             OnHurt();
+
+        return reduced;
     }
 
     protected virtual void OnHurt()

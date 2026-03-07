@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BossAnimEventReceiver : MonoBehaviour
@@ -22,13 +23,29 @@ public class BossAnimEventReceiver : MonoBehaviour
     
     public void AE_Ph1Range_FireStart()
     {
-        if (boss == null) return;
+        if (boss == null) 
+            return;
         boss.OnAnimEvent_Ph1Range_FireStart();
     }
 
     public void AE_Ph1Range_FireEnd()
     {
-        if (boss == null) return;
+        if (boss == null) 
+            return;
         boss.OnAnimEvent_Ph1Range_FireEnd();
+    }
+
+    public void AE_PhaseChange_HideStart()
+    {
+        if (boss == null) 
+            return;
+        boss.OnAnimEvent_HideStart();
+    }
+
+    public void AE_PhaseChange_HideEnd()
+    {
+        if (boss == null)
+            return;
+        boss.OnAnimEvent_HideEnd();
     }
 }

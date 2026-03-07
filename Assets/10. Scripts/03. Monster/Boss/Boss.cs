@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Boss : Monster
@@ -21,19 +22,36 @@ public class Boss : Monster
         phase2Triggered = false;
     }
 
-    public override void TakeDamage(int damage)
+    public override int TakeDamage(int damage)
     {
         if (bossController != null && bossController.CurrentPhase == BossPhase.Dead)
-            return;
+            return 0;
 
         if (bossController != null)
         {
-            bool isIdle = bossController.StateMachine.CurrentState == bossController.IdleState;
-            if (isIdle == false)
-                return;
+            bool isTransition = bossController.StateMachine.CurrentState == bossController.PhaseTransitionState;
+            if (isTransition)
+                return 0;
+            
+            bool isIdle = (bossController.StateMachine.CurrentState == bossController.IdleState ||
+                           bossController.StateMachine.CurrentState == bossController.Ph2IdleState);
+            if (isIdle)
+                bossController.Animator.SetTrigger(bossController.AnimKeyHurt);
+            else
+                return 0;
         }
 
-        base.TakeDamage(damage);
+        int actualDamage = base.TakeDamage(damage);
+
+        if (Stat.CurrentHp <= 0)
+        {
+            if (bossController.CurrentPhase != BossPhase.Dead)
+            {
+                bossController.ChangePhase(BossPhase.Dead);
+                bossController.StateMachine.ChangeState(bossController.DeadState);
+            }
+            return actualDamage;
+        }
 
         if (bossController != null && bossController.CurrentPhase == BossPhase.Phase1
                                    && phase2Triggered == false)
@@ -43,9 +61,10 @@ public class Boss : Monster
             if (hpRatio <= phase2Threshold)
             {
                 phase2Triggered = true;
-                bossController.ChangePhase(BossPhase.Phase2);
                 bossController.StateMachine.ChangeState(bossController.PhaseTransitionState);
             }
         }
+
+        return actualDamage;
     }
 }
