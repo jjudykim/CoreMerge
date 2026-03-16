@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03ea3b53da794c939730acc2841a0c80, type: 3}
+  m_Name: CoreData_10005
+  m_EditorClassIdentifier: Assembly-CSharp::CoreDataSO
+  data:
+    id: 10005
+    coreName: core_big_amber
+    tier: 5
+    icon: {fileID: -8435902292209324209, guid: e7ac9397aa3dd2b41970272cc818ba6b, type: 3}
+    modifier:
+      maxHpBonus: 1
+      attackBonus: 15
+      defenseBonus: 1
+      critChanceBonus: 0.2
+      critDamageBonus: 0.2
+      skillCooldownRate: 0
+      canUseSkill: 0
+      skillId: 0
