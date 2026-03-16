@@ -22,19 +22,17 @@ public abstract class PlayerStateBase : IPlayerState
     {
         // 상태 진입에 대한 공통 처리
     }
-
     public virtual void Exit()
     {
         // 상태 퇴장에 대한 공통 처리
     }
-    
     public virtual void UpdateLogic()
     {
         // 공통 논리 업데이트
     }
-
     public virtual void UpdatePhysics()
     {
         // 공통 물리 업데이트        
     }
 }
+

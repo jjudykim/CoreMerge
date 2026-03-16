@@ -9,6 +9,43 @@ public class GameManager
         corePrefab = Resources.Load<GameObject>("Prefabs/Core").GetComponent<Core>();    
     }
 
+    public void ResetGame()
+    {
+        RespawnPlayer();
+
+        if (Managers.Instance.CoreInventory != null)
+            Managers.Instance.CoreInventory.ResetInventory();
+
+        if (Managers.Instance.QuickSlots != null)
+            Managers.Instance.QuickSlots.ClearAllSlots();
+    }
+
+    public void RespawnPlayer()
+    {
+        if (Player.LocalPlayer != null)
+        {
+            GameObject oldPlayer = Player.LocalPlayer.gameObject;
+            Player.LocalPlayer = null;
+            Object.Destroy(oldPlayer);
+        }
+
+        if (Managers.Instance.PlayerPrefab != null)
+        {
+            GameObject newPlayer = Object.Instantiate(Managers.Instance.PlayerPrefab);
+        }
+    }
+
+    public void OnPlayerDead()
+    {
+        Managers.Instance.UI.ShowGameEndUI(false);
+    }
+    
+    public void OnBossDead()
+    {
+        Managers.Instance.UI.ShowGameEndUI(true);
+        Managers.Instance.Save.DeleteSave();
+    }
+
     public void SpawnCore(Vector3 position, int coreId)
     {
         Core pickup = Object.Instantiate(corePrefab, position, Quaternion.identity);

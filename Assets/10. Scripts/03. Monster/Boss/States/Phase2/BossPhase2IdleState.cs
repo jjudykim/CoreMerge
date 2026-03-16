@@ -1,26 +1,38 @@
+using UnityEngine;
+
 public class BossPhase2IdleState : BossStateBase
 {
+    private float waitTimer;
+
+    private const float MinWaitTime = 3.0f;
+    private const float MaxWaitTime = 5.0f;
+    
     public BossPhase2IdleState(BossController boss, BossStateMachine stateMachine) : base(boss, stateMachine)
     {
     }
 
-    public void Enter()
+    public override void Enter()
     {
-        throw new System.NotImplementedException();
+        base.Enter();
+        
+        animator.SetTrigger(bosscontroller.AnimKeyPh2Idle);
+        waitTimer = Random.Range(MinWaitTime, MaxWaitTime);
     }
 
-    public void Exit()
+    public override void Exit()
     {
-        throw new System.NotImplementedException();
+        base.Exit();
+        animator.ResetTrigger(bosscontroller.AnimKeyPh2Idle);
     }
 
-    public void UpdateLogic()
+    public override void UpdateLogic()
     {
-        throw new System.NotImplementedException();
-    }
+        base.UpdateLogic();
+        waitTimer -= Time.deltaTime;
 
-    public void UpdatePhysics()
-    {
-        throw new System.NotImplementedException();
+        if (waitTimer <= 0f)
+        {
+            stateMachine.ChangeState(bosscontroller.Ph2HandState);
+        }
     }
 }

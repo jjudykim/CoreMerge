@@ -31,6 +31,8 @@ public class FollowCamera : MonoBehaviour
     private Camera Cam { get; set; }
     private States State { get; set; } = States.Stopped;
 
+    private float originalOrthoSize; // 원래 사이즈 저장용
+
     // Focusing
     private Transform focusTarget;
     private Vector3 focusWorldPosition;
@@ -42,12 +44,24 @@ public class FollowCamera : MonoBehaviour
         Cam = GetComponent<Camera>();
         if (Cam == null)
             Cam = Camera.main;
+
+        if (Cam != null)
+            originalOrthoSize = Cam.orthographicSize;
+
+        State = currentState;
+        if (defaultTarget != null)
+            SetTarget(defaultTarget);
         
-        SetTarget(defaultTarget);
-        ChangeState(States.Following);
+        // if (defaultTarget == null && Player.LocalPlayer != null)
+        // {
+        //     defaultTarget = Player.LocalPlayer.transform;
+        // }
+        //
+        // SetTarget(defaultTarget);
+        // ChangeState(States.Following);
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         #region 테스트 코드
         //if (Input.GetKeyDown(KeyCode.F1))
@@ -68,12 +82,16 @@ public class FollowCamera : MonoBehaviour
         //    ChangeState(States.Following);
         //}
         #endregion
-        
+
+        if (currentTarget == null && Player.LocalPlayer != null)
+        {
+            defaultTarget = Player.LocalPlayer.transform;
+            SetTarget(defaultTarget);
+        }
+
         switch (State)
         {
             case States.Stopped:
-                return;
-            
             case States.Holding:
                 return;
             
@@ -93,7 +111,6 @@ public class FollowCamera : MonoBehaviour
             return;
 
         Vector3 desired = currentTarget.position + offset;
-        desired.z = transform.position.z;
         
         Vector3 next = Vector3.Lerp(transform.position, desired, lerpSpeed * Time.deltaTime);
         next.z = transform.position.z;
@@ -167,18 +184,26 @@ public class FollowCamera : MonoBehaviour
         StopFocusRoutine();
         ChangeState(States.Following);
     }
+
+    public void ResetCamera()
+    {
+        StopFocusRoutine();
+        SetTarget(defaultTarget);
+        if (Cam != null)
+            Cam.orthographicSize = originalOrthoSize;
+        ChangeState(States.Following);
+    }
     
-    public void FocusOnTarget(Transform target, float duration, bool returnToFollow = true)
+    public void FocusOnTarget(Transform target, float duration, float zoomSize = 3.0f, bool returnToFollow = true)
     {
         if (target == null)
             return;
 
         StopFocusRoutine();
-
         focusTarget = target;
 
         ChangeState(States.Focusing);
-        focusRoutine = StartCoroutine(CoFocus(duration, returnToFollow));
+        focusRoutine = StartCoroutine(CoFocusWithZoom(duration, zoomSize, returnToFollow));
     }
     
     public void FocusOnPosition(Vector3 worldPos, float duration, bool returnToFollow = true)
@@ -201,7 +226,33 @@ public class FollowCamera : MonoBehaviour
         }
 
         if (returnToFollow)
-            ChangeState(States.Following);
+            ResetCamera();
+    }
+
+    private IEnumerator CoFocusWithZoom(float duration, float targetSize, bool returnToFollow)
+    {
+        float startSize = Cam.orthographicSize;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            Cam.orthographicSize = Mathf.Lerp(startSize, targetSize, t);
+            if (focusTarget != null)
+                focusWorldPosition = focusTarget.position;
+
+            yield return null;
+        }
+        
+        Cam.orthographicSize = targetSize;
+        yield return new WaitForSeconds(1.0f);
+
+        if (returnToFollow)
+        {
+            ResetCamera();
+        }
     }
 
     private void StopFocusRoutine()

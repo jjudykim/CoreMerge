@@ -31,12 +31,15 @@ public class ChangeSceneTrigger : MonoBehaviour
                 Managers.Instance.Flow.GoToLobby();
                 break;
             case TriggerAction.StartTutorial:
+                Managers.Instance.Save.SaveGame(Managers.Instance.Flow.NameOfTutorial);
                 Managers.Instance.Flow.StartTutorial();
                 break;
             case TriggerAction.StartStage:
+                Managers.Instance.Save.SaveGame(Managers.Instance.Flow.NameOfStage);
                 Managers.Instance.Flow.StartStage();
                 break;
             case TriggerAction.EnterBoss:
+                Managers.Instance.Save.SaveGame(Managers.Instance.Flow.NameOfBoss);
                 Managers.Instance.Flow.EnterBossRoom();
                 break;
         }

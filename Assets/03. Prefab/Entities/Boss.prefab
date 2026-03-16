@@ -34,6 +34,7 @@ Transform:
   m_Children:
   - {fileID: 8816127202781509974}
   - {fileID: 4378291047635068759}
+  - {fileID: 8228468290150112465}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &575186565979792079
@@ -57,10 +58,11 @@ MonoBehaviour:
   headUpPivot: {fileID: 4378291047635068759}
   mainCollider: {fileID: 1498687926881321671}
   monsterController: {fileID: 0}
-  animator: {fileID: 0}
+  animator: {fileID: 4094580490322565006}
   contactDamageEnabled: 1
   contactDamageAmount: 1
   bossController: {fileID: 3834446882760050433}
+  phase2Threshold: 0.5
 --- !u!114 &3834446882760050433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,8 +84,14 @@ MonoBehaviour:
   dashOffset: {x: 3, y: -3}
   attackDuration: 2.2
   returnDuration: 0.5
-  projectileCooldown: 0
-  handPatternCooldown: 0
+  projectileSpawnPoint: {fileID: 8228468290150112465}
+  projectilePrefab: {fileID: 4391058494848249379, guid: f9f2453ded5388541a4b342cf2a7e28d, type: 3}
+  rangeProjectileCount: 5
+  rangeFireInterval: 0.15
+  rangeProjectileSpeed: 8
+  rangeTurnRate: 360
+  rangeLifeTime: 2
+  rangeAfterDelay: 0.1
 --- !u!50 &1867310398873191938
 Rigidbody2D:
   serializedVersion: 5
@@ -111,6 +119,37 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!1 &4535242330101385428
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8228468290150112465}
+  m_Layer: 0
+  m_Name: ProjectileSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8228468290150112465
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4535242330101385428}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.04, y: 4.02, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7829280597617046042}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7293896886244878052
 GameObject:
   m_ObjectHideFlags: 0
@@ -199,15 +238,37 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 575186565979792079}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 1207378872290620470, guid: 401761195c6204a49adef91ba7545923, type: 3}
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1115980166732422948, guid: 401761195c6204a49adef91ba7545923, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4645850443825801417}
   m_SourcePrefab: {fileID: 100100000, guid: 401761195c6204a49adef91ba7545923, type: 3}
 --- !u!70 &1498687926881321671 stripped
 CapsuleCollider2D:
   m_CorrespondingSourceObject: {fileID: 131261892153145538, guid: 401761195c6204a49adef91ba7545923, type: 3}
   m_PrefabInstance: {fileID: 1521721088256047621}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1901362681547285793 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1115980166732422948, guid: 401761195c6204a49adef91ba7545923, type: 3}
+  m_PrefabInstance: {fileID: 1521721088256047621}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4645850443825801417
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1901362681547285793}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c802e7b18dc147468a964575b280e98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BossAnimEventReceiver
+  boss: {fileID: 3834446882760050433}
 --- !u!212 &2652685740978391875 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 3588813529575731526, guid: 401761195c6204a49adef91ba7545923, type: 3}

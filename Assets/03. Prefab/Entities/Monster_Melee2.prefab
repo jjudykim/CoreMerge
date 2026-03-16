@@ -250,6 +250,8 @@ MonoBehaviour:
   owner: {fileID: 55231943091278591}
   useOwnerAttackStat: 1
   fixedDamage: 1
+  startDisabled: 1
+  hitCollider: {fileID: 0}
 --- !u!50 &4571120545227004534
 Rigidbody2D:
   serializedVersion: 5
@@ -258,7 +260,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5601545959562668650}
-  m_BodyType: 0
+  m_BodyType: 2
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -326,7 +328,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MeleeMonster
   type: 0
   stat:
-    maxHp: 100
+    maxHp: 50
     attack: 1
     defense: 10
     currentHp: 0
@@ -334,7 +336,6 @@ MonoBehaviour:
   mainCollider: {fileID: 4718559678460124310}
   monsterController: {fileID: 3906442445523886776}
   animator: {fileID: 4900955307769641399}
-  hitBox: {fileID: 5601545959562668650}
   contactDamageEnabled: 0
   contactDamageAmount: 1
 --- !u!114 &3906442445523886776
@@ -357,10 +358,11 @@ MonoBehaviour:
   idleWaitTime: 2
   chaseSpeed: 3
   chaseAnimSpeed: 2
-  attackCooldown: 3
+  attackCooldown: 2
   attackDuration: 1.2
   hurtDuration: 0.5
   rigidBody: {fileID: 6726629032190364169}
+  hitbox: {fileID: 0}
 --- !u!50 &6726629032190364169
 Rigidbody2D:
   serializedVersion: 5

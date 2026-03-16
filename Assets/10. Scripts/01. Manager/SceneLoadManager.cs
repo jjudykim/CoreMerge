@@ -10,17 +10,25 @@ public class SceneLoadManager : MonoBehaviour
     public void LoadScene(string sceneName, string portalId = null)
     {
         if (IsLoading)
+        {
+            Debug.Log("[SCeneLoadManager] ::: already Loading ...");
             return;
-
+        }
         PendingPortalId = portalId;
 
-        StartCoroutine(CoLoadScene(sceneName));
+        StartCoroutine(CoLoadSceneWithFade(sceneName));
     }
 
-    private IEnumerator CoLoadScene(string sceneName)
+    private IEnumerator CoLoadSceneWithFade(string sceneName)
     {
         IsLoading = true;
 
+        bool isFadeOutComplete = false;
+        Managers.Instance.UI.FadeOut(() => isFadeOutComplete = true);
+
+        while (isFadeOutComplete == false)
+            yield return null;
+        
         AsyncOperation op = SceneManager.LoadSceneAsync(sceneName);
         op.allowSceneActivation = false;
 
@@ -33,6 +41,8 @@ public class SceneLoadManager : MonoBehaviour
 
         while (!op.isDone)
             yield return null;
+
+        Managers.Instance.UI.FadeIn();
 
         IsLoading = false;
     }

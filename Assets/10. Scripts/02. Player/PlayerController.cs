@@ -394,15 +394,9 @@ public class PlayerController : MonoBehaviour
     {
         switch (playerHitBox.HitBoxType)
         {
-            case HitBoxType.DashAttack:
-                Debug.Log("OnHitBoxTriggered ::: DashAttack Done!!!");
-                break;
-            case HitBoxType.SlideAttack:
-                Debug.Log("OnHitBoxTriggered ::: SlideAttack Done!!!");
-                break;
-            case HitBoxType.NormalAttack:
-                Debug.Log("OnHitBoxTriggered ::: Attack Done!!!");
-                break;
+            case HitBoxType.DashAttack:   Debug.Log("OnHitBoxTriggered ::: DashAttack Done!!!");  break;
+            case HitBoxType.SlideAttack:  Debug.Log("OnHitBoxTriggered ::: SlideAttack Done!!!"); break;
+            case HitBoxType.NormalAttack: Debug.Log("OnHitBoxTriggered ::: Attack Done!!!"); break;
         }
         
         string attackKey = playerHitBox.HitBoxType.ToString();

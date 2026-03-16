@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2430782236986588915
 Transform:
   m_ObjectHideFlags: 0
@@ -96,6 +96,7 @@ MonoBehaviour:
   useOwnerAttackStat: 1
   fixedDamage: 1
   startDisabled: 1
+  hitCollider: {fileID: 0}
 --- !u!50 &8523100027859982218
 Rigidbody2D:
   serializedVersion: 5
@@ -353,4 +354,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9011ac53e6d77e34392796a064b1eae9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MonsterAnimEventReceiver
+  monsterController: {fileID: 0}
   hitBox: {fileID: 4304994807184166889}
