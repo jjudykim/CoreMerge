@@ -13,8 +13,20 @@ public class LifeHUD : MonoBehaviour
     [SerializeField] private Sprite emptySprite;
 
     private readonly List<Image> icons = new();
-
     private Player boundPlayer;
+
+    private void Awake()
+    {
+        if (lifeRoot == null)
+            return;
+
+        foreach (Transform child in lifeRoot)
+        {
+            var img = child.GetComponent<Image>();
+            if (img != null)
+                icons.Add(img);
+        }
+    }
 
     public void Bind(Player player)
     {
@@ -31,7 +43,7 @@ public class LifeHUD : MonoBehaviour
         
         boundPlayer.OnLifeChanged += OnLifeChanged;
         
-        OnLifeChanged(boundPlayer.CurrentHp, boundPlayer.PlayerStat.MaxHp);
+        OnLifeChanged(boundPlayer.CurrentHp, boundPlayer.FinalMaxHp);
     }
 
     private void OnDestroy()
@@ -48,33 +60,40 @@ public class LifeHUD : MonoBehaviour
 
     private void SyncIconCount(int max)
     {
+        // 부족한 만큼 생성
         while (icons.Count < max)
         {
             Image img = Instantiate(lifeIconPrefab, lifeRoot);
             icons.Add(img);
         }
         
+        // 초과하는 만큼 제거
         while (icons.Count > max)
         {
             int last = icons.Count - 1;
             Image img = icons[last];
             icons.RemoveAt(last);
-            Destroy(img.gameObject);
+            
+            if (img != null)
+                Destroy(img.gameObject);
         }
     }
 
     private void RefreshIcons(int current, int max)
     {
-        int count = Mathf.Min(max, icons.Count);
+        int activeCount = Mathf.Min(max, icons.Count);
         
-        for (int i = 0; i < max; ++i)
+        for (int i = 0; i < activeCount; ++i)
         {
-            bool filled = (i < current);
-            icons[i].sprite = filled ? fullSprite : emptySprite;
-            icons[i].enabled = true;
+            if (i < activeCount)
+            {
+                icons[i].gameObject.SetActive(true);
+                icons[i].sprite = (i < current) ? fullSprite : emptySprite;
+            }
+            else
+            {
+                icons[i].gameObject.SetActive(false);
+            }
         }
-        
-        for(int i = count; i < icons.Count; ++i)
-            icons[i].enabled = false;
     }
 }

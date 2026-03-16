@@ -142,7 +142,8 @@ public class MonsterController : MonoBehaviour
                 animator.speed = NORMAL_ANIM_SPEED;
                 break;
             case MonsterState.Attack:
-                hitbox.ForceDisableHitBox();
+                if (hitbox != null)
+                    hitbox.ForceDisableHitBox();
                 break;
         }
         
@@ -154,28 +155,31 @@ public class MonsterController : MonoBehaviour
         switch (CurrentState)
         {
             case MonsterState.Idle:
-                hitbox.ForceDisableHitBox();
-                animator.SetTrigger(IDLE);
-                break;
             case MonsterState.Patrol:
-                hitbox.ForceDisableHitBox();
-                animator.SetTrigger(WALK);
-                break;
             case MonsterState.Chase:
-                hitbox.ForceDisableHitBox();
-                animator.SetTrigger(CHASE);
+            case MonsterState.Hurt:
+            case MonsterState.Death:
+                if (hitbox != null)
+                    hitbox.ForceDisableHitBox();
+                SetStateAnimation(CurrentState);
                 break;
             case MonsterState.Attack:
                 attackCooldownTimer = attackCooldown;
                 animator.SetTrigger(ATTACK);
                 didAttackThisState = false;
                 break;
-            case MonsterState.Hurt:
-                hitbox.ForceDisableHitBox();
-                animator.SetTrigger(HURT);
-                break;
-            case MonsterState.Death:
-                hitbox.ForceDisableHitBox();
+        }
+    }
+
+    private void SetStateAnimation(MonsterState state)
+    {
+        switch (state)
+        {
+            case MonsterState.Idle: animator.SetTrigger(IDLE); break;
+            case MonsterState.Patrol: animator.SetTrigger(WALK); break;
+            case MonsterState.Chase: animator.SetTrigger(CHASE); break;
+            case MonsterState.Hurt: animator.SetTrigger(HURT); break;
+            case MonsterState.Death: 
                 animator.SetTrigger(DEATH);
                 Owner.MainCollider.enabled = false;
                 break;
@@ -219,12 +223,13 @@ public class MonsterController : MonoBehaviour
     {
         if (TryGetPlayer(out Vector2 playerPos, out float dist))
         {
-            if (dist <= attackRange && attackCooldownTimer <= 0f)
+            if (dist <= attackRange)
             {
-                ChangeState(MonsterState.Attack);
+                if (attackCooldownTimer <= 0f)
+                    ChangeState(MonsterState.Attack);
+                
                 return;
             }
-
             if (dist <= traceRange)
             {
                 ChangeState(MonsterState.Chase);
@@ -278,8 +283,12 @@ public class MonsterController : MonoBehaviour
 
         if (dist <= attackRange)
         {
-            ChangeState(MonsterState.Attack);
+            if (attackCooldownTimer <= 0f)
+                ChangeState(MonsterState.Attack);
+            else
+                ChangeState(MonsterState.Idle);
             return;
+            
         }
 
         MoveTowardsX(playerPos, chaseSpeed);
@@ -329,7 +338,12 @@ public class MonsterController : MonoBehaviour
             if (TryGetPlayer(out _, out float dist))
             {
                 if (dist <= attackRange)
-                    ChangeState(MonsterState.Attack);
+                {
+                    if (attackCooldownTimer <= 0f)
+                        ChangeState(MonsterState.Attack);
+                    else
+                        ChangeState(MonsterState.Idle);
+                }
                 else if (dist <= traceRange)
                     ChangeState(MonsterState.Chase);
                 else
@@ -352,8 +366,9 @@ public class MonsterController : MonoBehaviour
     {
         if (CurrentState == MonsterState.Death)
             return;
-        
-        hitbox.ForceDisableHitBox();
+
+        if (hitbox != null)
+            hitbox.ForceDisableHitBox();
 
         StartCoroutine(HitEffectCoroutine());
         ApplyKnockback();
@@ -364,8 +379,9 @@ public class MonsterController : MonoBehaviour
     {
         if (CurrentState == MonsterState.Death)
             return;
-        
-        hitbox.ForceDisableHitBox();
+     
+        if (hitbox != null)
+            hitbox.ForceDisableHitBox();
         
         ChangeState(MonsterState.Death);
     }

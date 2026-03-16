@@ -17,7 +17,9 @@ public class GameFlowManager : MonoBehaviour
     private const string SCENE_TUTORIAL = "TutorialStage";
     private const string SCENE_STAGE = "Stage";
     private const string SCENE_BOSS = "BossRoom";
-
+    public string NameOfTutorial => SCENE_TUTORIAL;
+    public string NameOfStage => SCENE_STAGE;
+    public string NameOfBoss => SCENE_BOSS;
     public void GoToLobby()
     {
         CurrentStep = GameFlowStep.Lobby;

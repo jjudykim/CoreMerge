@@ -79,7 +79,7 @@ MonoBehaviour:
   idleWaitTime: 4
   chaseSpeed: 3
   chaseAnimSpeed: 2
-  attackCooldown: 5
+  attackCooldown: 2
   attackDuration: 1
   hurtDuration: 0.5
   rigidBody: {fileID: 4672025871317172708}
@@ -123,6 +123,10 @@ PrefabInstance:
       propertyPath: monsterController
       value: 
       objectReference: {fileID: 6467639345314492676}
+    - target: {fileID: 3463533491853659915, guid: 54ddf1b7e8f535948a69f58ab1f81abe, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5018962197041432517, guid: 54ddf1b7e8f535948a69f58ab1f81abe, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -161,6 +165,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5018962197041432517, guid: 54ddf1b7e8f535948a69f58ab1f81abe, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7406081091687487239, guid: 54ddf1b7e8f535948a69f58ab1f81abe, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7569515137197399858, guid: 54ddf1b7e8f535948a69f58ab1f81abe, type: 3}

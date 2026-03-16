@@ -4,8 +4,8 @@ public class BossIdleState : BossStateBase
 {
     private float waitTimer;
 
-    private float minWaitTime = 5f;
-    private float maxWaitTime = 2f;
+    private float minWaitTime = 2f;
+    private float maxWaitTime = 5f;
     public BossIdleState(BossController boss, BossStateMachine stateMachine) : base(boss, stateMachine)
     {
     }
@@ -39,33 +39,30 @@ public class BossIdleState : BossStateBase
     private void SelectNextPattern()
     {
         // Test용
-        SelectPhase1Pattern();
+        //SelectPhase1Pattern();
         
-        //switch (bosscontroller.CurrentPhase)
-        //{
-        //    case BossPhase.Phase1:
-        //        SelectPhase1Pattern();
-        //        break;
-        //    case BossPhase.Phase2:
-        //        SelectPhase2Pattern();
-        //        break;
-        //    case BossPhase.Dead:
-        //        // TODO : Dead Phase라면 실제 DeadState로 넘길까?? 고민중
-        //        break;
-        //        
-        //}
+        switch (bosscontroller.CurrentPhase)
+        {
+            case BossPhase.Phase1:
+                SelectPhase1Pattern();
+                break;
+            case BossPhase.Phase2:
+                SelectPhase2Pattern();
+                break;
+            case BossPhase.Dead:
+                // TODO : Dead Phase라면 실제 DeadState로 넘길까?? 고민중
+                break;
+                
+        }
     }
 
     private void SelectPhase1Pattern()
     {
-        // TODO : Phase1 테스트용
-        stateMachine.ChangeState(bosscontroller.P1DashAttackState);
-        
-        //int pattern = Random.Range(0, 2);
-        //if (pattern == 0)
-        //    stateMachine.ChangeState(bosscontroller.P1DashAttackState);
-        //else
-        //    stateMachine.ChangeState(bosscontroller.P1RangeState);
+        int pattern = Random.Range(0, 2);
+        if (pattern == 0)
+            stateMachine.ChangeState(bosscontroller.Ph1DashAttackState);
+        else
+            stateMachine.ChangeState(bosscontroller.Ph1RangeState);
     }
     
     private void SelectPhase2Pattern()
@@ -73,8 +70,8 @@ public class BossIdleState : BossStateBase
         int pattern = Random.Range(0, 2);
         
         if (pattern == 0)
-            stateMachine.ChangeState(bosscontroller.P2RangeState);
+            stateMachine.ChangeState(bosscontroller.Ph2RangeState);
         else
-            stateMachine.ChangeState(bosscontroller.P2HandState);
+            stateMachine.ChangeState(bosscontroller.Ph2HandState);
     }
 }
